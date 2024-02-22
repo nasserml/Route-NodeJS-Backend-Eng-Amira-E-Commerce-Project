@@ -36,6 +36,9 @@ const list_of_files = [
 
     // Initiate app 
     "src/initiate-app.js",
+
+    // Index routes 
+    "src/modules/index.routes.js",
     
     // Index
     "index.js"
