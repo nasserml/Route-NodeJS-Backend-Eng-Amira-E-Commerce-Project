@@ -97,3 +97,59 @@ export const verfiyEmailAPI = async (req, res, next) =>{
     res.status(user.status).json({success: user.success, message: 'Email verfied successfully, please try to login'});
 
 }
+
+// ================================= SignIn API ======================
+/**
+ * destructuring the required data from the request body
+ * get user by email and check if isEmailVerfied = true
+ * if not return error invalid login credentials
+ * if found
+ * check if the password is correct
+ * if not return error invalid login credentails
+ * if found 
+ * generate login token
+ * update isLoggedIn = true in the database
+ * return the response
+ */
+/**
+ * Sign in API endpoint 
+ * 
+ * @param {import('express').Request} req  - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the user is logged in
+ * 
+ * @throws {Error} If invalid login credentials
+ */
+export const signInAPI = async ( req, res, next) => {
+
+    // destructuring the required data from the request body
+    const {email, password} = req.body;
+
+    // get user by email and check if isEmailVerfied = true
+    const user = await findDocumentByFindOne(User, {email, isEmailVerfied: true});
+
+    // Check if the user is found otherwise return an error
+    if (!user.success) return next(new Error('Invalid login credentials', { cause: 404}))
+
+    // check the password 
+    const isPasswordValid = bcrypt.compareSync(password, user.isDocumentExists.password);
+
+    // If the password is not valid return an error
+    if (!isPasswordValid) return next(new Error('Invalid login credentials', {cause: 404}))
+
+    // Generate login token with user email and user id and loggedIn = true
+    const token = jwt.sign({ email, is: user.isDocumentExists._id, loggedIn: true}, process.env.JWT_SECRET_LOGIN, {expiresIn: '1d'});
+
+    // update isLoggedIn = true in the database
+    user.isDocumentExists.isLoggedIn = true;
+    
+    // Save the updated user document
+    await user.isDocumentExists.save();
+
+    // Send a success response that the user is logged in with token
+    res.status(user.status).json({success: user.success, message: 'User logged in successfully', data: { token}});
+
+
+}
