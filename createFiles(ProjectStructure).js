@@ -21,6 +21,12 @@ const list_of_files = [
     "src/middlewares/rollback-saved-documents.middleware.js",
     "src/middlewares/rollback-uploaded-files.middleware.js",
     
+    // Auth modules
+    "src/modules/Auth/auth.controller.js",
+    "src/modules/Auth/auth.routes.js",
+    "src/modules/Auth/auth.endpoints.roles.js",
+    "src/modules/Auth/auth.validationSchemas.js",
+
     // Utils
     "src/utils/cloudinary.js",
     "src/utils/allowedExtensions.js",
