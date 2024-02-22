@@ -14,3 +14,11 @@ export const signUpSchema = {
         addresses: Joi.array().items(Joi.string()).required().messages({'any.required': 'Addresses are required'})
     }).with('password', 'cpass')
 };
+
+// Schema for validating login API Endpoint
+export const loginSchema = {
+    body:Joi.object({
+        email: Joi.string().email().required().messages({'any.required': 'Email is required'}),
+        password: Joi.string().required().messages({'any.required': 'Password is required'})
+    })
+};
