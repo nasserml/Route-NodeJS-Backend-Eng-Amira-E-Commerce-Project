@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import User from '../../../DB/models/user.model.js';
 import sendEmailService from '../../services/send-email.service.js';
-import { createDocumnetByCreate, findDocumentByFindOne } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, findDocumentByFindOne, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
 
 // ========================== SignUp APi ====================
 
@@ -56,4 +56,44 @@ export const signUpAPI =async (req, res, next) => {
 
      // 7- return the response
      res.status(newUser.status).json({success: newUser.success, message: 'User created successfully, Please check your email to verfiy your account', data: newUser});
+}
+
+// ======================== verfiy Email API =====================
+/**
+ * destructuring the token from the request query 
+ * verfiy the token 
+ * get user by email, isEmailVerfied = false
+ * if not return error user not found
+ * if founnd 
+ * update isEmailVerfied = true
+ * return response
+ */
+/**
+ * Verfiy email API endpoint using the provided token
+ * 
+ * @param {import('express').Request} req  - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns  {import('express').Response} JSON response - Returns success response that the email is verfied
+ * 
+ * @throws {Error} If user not found
+ */
+export const verfiyEmailAPI = async (req, res, next) =>{
+    
+    // Extract the token from the request query
+    const {token} = req. query;
+
+    // Decode the token using the JWT secret for verfication
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET_VERFICATION);
+
+    // get user by email, isEmailVerfied = false
+    // Update the user document and set isEmailVerfied = true
+    const user = await updateDocumentByFindOneAndUpdate(User, {email:decodedData.email, isEmailVerfied: false}, {isEmailVerfied: true}, {new: true});
+
+    // Check if the user is found otherwise return an error
+    if(!user.success) return next(new Error('User not found', { cause : 404}));
+
+    // Send a success response that the email is verfied
+    res.status(user.status).json({success: user.success, message: 'Email verfied successfully, please try to login'});
+
 }
