@@ -33,8 +33,11 @@ const list_of_files = [
 
     // Services
     "src/services/send-email.service.js",
-    
 
+    // Initiate app 
+    "src/initiate-app.js",
+    
+    // Index
     "index.js"
 ];
 
