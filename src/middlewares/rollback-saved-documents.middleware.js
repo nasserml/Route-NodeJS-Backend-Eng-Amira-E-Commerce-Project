@@ -9,6 +9,10 @@ import { deleteDocumentByFindByIdAndDelete } from "../../DB/dbMethods";
  */
 export const rollbackSavedDocuments = async (req, res, next) => {
 
+    /**
+     * @description delete the saved documents from the database if the request failed
+     * @param {object} { model, _id} - The saved documents
+     */
     // Log the rollbackSavedDocuments middleware
     console.log('rollbackSavedDocuments middleware');
 
