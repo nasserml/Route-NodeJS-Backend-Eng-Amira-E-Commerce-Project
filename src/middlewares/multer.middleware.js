@@ -1,5 +1,5 @@
 import multer from "multer";
-import generateUniqueString from "../utils/generalUniqueString.js";
+import generateUniqueString from "../utils/generate-Unique-String.js";
 import { allowedExtensions } from "../utils/allowedExtensions.js";
 
 

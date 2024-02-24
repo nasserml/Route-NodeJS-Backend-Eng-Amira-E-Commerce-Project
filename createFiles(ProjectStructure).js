@@ -31,7 +31,7 @@ const list_of_files = [
     "src/utils/cloudinary.js",
     "src/utils/allowedExtensions.js",
     "src/utils/pagination.js",
-    "src/utils/generalUniqueString.js",
+    "src/utils/generate-Unique-String.js",
     "src/utils/systemRoles.js",
     "src/utils/general.validation.rule.js",
     "src/utils/generateOTP.js",
