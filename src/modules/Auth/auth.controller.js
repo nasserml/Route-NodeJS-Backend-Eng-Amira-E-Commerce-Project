@@ -86,9 +86,10 @@ export const verfiyEmailAPI = async (req, res, next) =>{
     // Decode the token using the JWT secret for verfication
     const decodedData = jwt.verify(token, process.env.JWT_SECRET_VERFICATION);
 
+    console.log({decodedData});
     // get user by email, isEmailVerfied = false
     // Update the user document and set isEmailVerfied = true
-    const user = await updateDocumentByFindOneAndUpdate(User, {email:decodedData.email, isEmailVerfied: false}, {isEmailVerfied: true}, {new: true});
+    const user = await updateDocumentByFindOneAndUpdate(User, {email:decodedData.email, isEmailVerified: false}, {isEmailVerfied: true}, {new: true});
 
     // Check if the user is found otherwise return an error
     if(!user.success) return next(new Error('User not found', { cause : 404}));
