@@ -25,6 +25,9 @@ export const intiateApp = (app, express) => {
     // Set up authentication routes
     app.use('/auth', routes.authRouter);
 
+    // Set up category routes
+    app.use('/category', routes.categoryRouter);
+
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
 
