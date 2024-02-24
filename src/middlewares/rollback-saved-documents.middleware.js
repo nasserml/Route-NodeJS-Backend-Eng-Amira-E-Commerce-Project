@@ -1,4 +1,4 @@
-import { deleteDocumentByFindByIdAndDelete } from "../../DB/dbMethods";
+import { deleteDocumentByFindByIdAndDelete } from "../../DB/dbMethods.js";
 
 /**
  * Middleware to rollback saved documents
