@@ -140,7 +140,7 @@ export const signInAPI = async ( req, res, next) => {
     if (!isPasswordValid) return next(new Error('Invalid login credentials', {cause: 404}))
 
     // Generate login token with user email and user id and loggedIn = true
-    const token = jwt.sign({ email, is: user.isDocumentExists._id, loggedIn: true}, process.env.JWT_SECRET_LOGIN, {expiresIn: '1d'});
+    const token = jwt.sign({ email, id: user.isDocumentExists._id, loggedIn: true}, process.env.JWT_SECRET_LOGIN, {expiresIn: '1d'});
 
     // update isLoggedIn = true in the database
     user.isDocumentExists.isLoggedIn = true;
