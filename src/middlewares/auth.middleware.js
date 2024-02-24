@@ -32,7 +32,7 @@ export const auth = (accessRoles) => {
             // const token = accesstoken.split(process.env.TOKEN_PREFIX)[1];
             
             // Verify the tokewn and decode its payload
-            const decodedData =  jwt.verify(token, process.env.JWT_SECRET_LOGIN);
+            const decodedData =  jwt.verify(accesstoken, process.env.JWT_SECRET_LOGIN);
 
             // Check if the token payload is valid.
             if(!decodedData || !decodedData.id) return next(new Error('Invalid token payload', {cause:400})) // If token payload is invalid, return an error
