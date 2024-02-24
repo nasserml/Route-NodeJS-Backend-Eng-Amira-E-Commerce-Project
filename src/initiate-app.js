@@ -5,17 +5,33 @@ import { rollbackUploadedFiles} from './middlewares/rollback-uploaded-files.midd
 
 import * as routes from './modules/index.routes.js';
 
+/**
+ * Initialize the E-commerce project.
+ * 
+ * @param {import('express')()} app - The express app instance.
+ * @param {import('express')} express - The Express module.
+ */
 export const intiateApp = (app, express) => {
+
+    // Get the port from enviromnent variables.
     const port = process.env.PORT
 
+    // Parse request as JSOM
     app.use(express.json());
 
+    // Connect to the database
     db_connection();
 
+    // Set up authentication routes
     app.use('/auth', routes.authRouter);
 
+    //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
 
+    // Set up a hello world route
     app.get('/', (req, res, next) => res.send('Hello world!'));
+    
+    // Start the app listening on the specified port
     app.listen(port, ()=> console.log(`E-commerce app listening on port ${port}`));
+
 }
