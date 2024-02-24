@@ -10,7 +10,7 @@ import { addCategorySchema } from './category.validationSchemas.js';
 
 const router = Router();
 
-router.post('/add-category', auth(endPointsRoles.ADD_CATEGORY),validationMiddleware(addCategorySchema),  multerMiddleHost({extensions: allowedExtensions.image}).single('image'), expressAsyncHandler(categoryController.addCategoryAPI));
+router.post('/add-category', auth(endPointsRoles.ADD_CATEGORY),  multerMiddleHost({extensions: allowedExtensions.image}).single('image'), expressAsyncHandler(categoryController.addCategoryAPI));
 
 export default router;
 
