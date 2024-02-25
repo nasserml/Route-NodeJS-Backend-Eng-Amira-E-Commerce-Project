@@ -3,7 +3,7 @@ import {globalResponse} from './middlewares/globalResponse.middleware.js';
 import {rollbackSavedDocuments} from './middlewares/rollback-saved-documents.middleware.js';
 import { rollbackUploadedFiles} from './middlewares/rollback-uploaded-files.middleware.js';
 
-import * as routes from './modules/index.routes.js';
+import * as routers from './modules/index.routes.js';
 
 /**
  * Initialize the E-commerce project.
@@ -23,10 +23,13 @@ export const intiateApp = (app, express) => {
     db_connection();
 
     // Set up authentication routes
-    app.use('/auth', routes.authRouter);
+    app.use('/auth', routers.authRouter);
 
     // Set up category routes
-    app.use('/category', routes.categoryRouter);
+    app.use('/category', routers.categoryRouter);
+
+    // Set up subCategory routes
+    app.use('/subCategory', routers.subCategoryRouter);
 
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
