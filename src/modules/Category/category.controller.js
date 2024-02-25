@@ -5,7 +5,7 @@ import SubCategory from '../../../DB/models/sub-category.model.js';
 import Brand from '../../../DB/models/brand.model.js';
 import cloudinaryConnection from '../../utils/cloudinary.js';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
-import { createDocumnetByCreate, findDocumentByFindOne} from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, findDocumentByFindById, findDocumentByFindOne} from '../../../DB/dbMethods.js';
 // ==================== Add Category API ==============
 /**
  * Add new category to the database eendpoin API.
@@ -63,4 +63,86 @@ export const addCategoryAPI = async (req, res, next) => {
     // 8- Send the response indicating the success of creating the category
     res.status(categoryCreated.status).json({success: categoryCreated.success, message: 'Categhory  created successfully', data: categoryCreated});
 
+}
+
+
+//=============================== Update category API ============================
+/**
+ * Update category API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the category is updated successfully.
+ * 
+ * @throws {Error} If the category name is the same as the exsisting one
+ * @throws {Error} If Category name is already exists
+ * @throws {Error} If the category not updated in the database
+ */
+export const updateCategoryAPI = async (req, res, next) => {
+
+    // 1- Destructuring the name and the oldPublicId from tyhe request body
+    const {name, oldPublicId} = req.body;
+
+    // 2- Destructuring the category id from the request params
+    const {categoryId} = req.params;
+
+    // 3- Destructuring the _id from the request authUser
+    const {_id }= req.authUser;
+
+    // 4- Check if the category is exist by using categoryId
+    const category = await findDocumentByFindById(Category, categoryId);
+
+    // 4.1- If it is not exists return an error category not found 
+    if(!category.success) return next({message:'Category not found', cause :404});
+
+    // 5- Check if the user want to update the name field
+    if(name) {
+
+        // 5.1- Check if the new category name is different from the old one if it is not return an error wiht message please enter different category name
+        if(name === category.isDocumentExists.name) return next({ cause: 404, message: 'Please enter different category name from the existing one'});
+        
+        // 5.2- Check if new category name is already exists 
+        const isNameCategoryDuplicated = await findDocumentByFindOne(Category, { name});
+
+        // 5.3- If it is exists return an error with meassage category name is already exisits
+        if(isNameCategoryDuplicated.success) return next ({cause: 409, message: 'Category name is already exists'});
+
+        // 5.4- Update the category name
+        category.isDocumentExists.name = name;
+
+        // 5.5- update the category slug by slugfing the name
+        category.isDocumentExists.slug = slugify(name, '-')
+
+    }
+
+    // 6- mCheck if the user want to update the image
+    if (oldPublicId) {
+
+        // 6.1- check if the image was sent to the request other wise return an error with image required
+        if (!req.file) return next({cause: 400, message: 'Image is required'});
+
+        // 6.2- Split the old public id to get the image file name so that we can overwrite it
+        const newPublicId = oldPublicId.split(`${category.isDocumentExists.folderId}`);
+
+        // 6.3- Generate folder path for secure url
+        const folderPath = `${process.env.MAIN_FOLDER}/Categories/${category.isDocumentExists.folderId}`;
+
+        // 6.4- Uploda the image to cloudinary and overwrite the existing one and destrucing the secureurl for the new one 
+        const {secure_url} = await cloudinaryConnection().uploader.upload(req.file.path, {folder: folderPath, public_id: newPublicId});
+
+        // 6.5- Update the old secure url to the new one
+        category.isDocumentExists.Image.secure_url = secure_url;
+
+    }
+
+    // 7- Addd field to the category indicating that the one who updated the category
+    category.isDocumentExists.updatedBy = _id;
+
+    // 8- Save the updated category in the database
+    await category.isDocumentExists.save();
+    
+    // 9- Send successfull response indicating that the category updated successfully
+    res.status(category.status).json({success: category.success, message: 'Category updated successfully', data: category});
 }
