@@ -146,3 +146,23 @@ export const updateCategoryAPI = async (req, res, next) => {
     // 9- Send successfull response indicating that the category updated successfully
     res.status(category.status).json({success: category.success, message: 'Category updated successfully', data: category});
 }
+
+
+// ====================== Get all categories API =====================
+/**
+ * Get all Categories API endpoint from the data base with subcategories and populate subcategories with brands as nested populate
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the categories are fetched successfully
+ */
+export const getAllCategoriesAPI = async (req, res, next) => {
+
+    // Nested populate to get all categories in the database and populate subCategories field with subcategories, and Brand for each subCategory
+    const categories = await Category.find().populate([{path: 'subCategories', populate:[{path: 'Brands'}]}]);
+
+    // Send successful response with status 200 and send a JSON response with a success messga e with categories
+    res.status(200).json({ success: true, message: 'Categories fetched successfully', data: categories});
+}
