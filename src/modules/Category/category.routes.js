@@ -13,6 +13,9 @@ const router = Router();
 router.post('/add-category', auth(endPointsRoles.ADD_CATEGORY),  multerMiddleHost({extensions: allowedExtensions.image}).single('image'), expressAsyncHandler(categoryController.addCategoryAPI));
 
 router.put('/update-category/:categoryId', auth(endPointsRoles.UPDATE_CATEGORY), multerMiddleHost({extensions: allowedExtensions.image}).single('image'), expressAsyncHandler(categoryController.updateCategoryAPI));
+
+router.get('/get-all-categories', expressAsyncHandler(categoryController.getAllCategoriesAPI));
+
 export default router;
 
 

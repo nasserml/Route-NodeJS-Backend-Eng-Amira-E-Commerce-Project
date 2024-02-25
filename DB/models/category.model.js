@@ -23,7 +23,7 @@ const categorySchema = new mongoose.Schema({
 },{timestamps: true, toJSON:{virtuals: true}, toObject:{virtuals: true}});
 
 // Virtual populate for subcategories
-categorySchema.virtual('subcategories', {ref:'subCategory', localField: '_id', foreignField: 'categoryId'});
+categorySchema.virtual('subcategories', {ref:'SubCategory', localField: '_id', foreignField: 'categoryId'});
 
 /**
  * Exports the category model to be used 

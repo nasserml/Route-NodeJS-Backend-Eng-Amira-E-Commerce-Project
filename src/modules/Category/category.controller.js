@@ -161,7 +161,7 @@ export const updateCategoryAPI = async (req, res, next) => {
 export const getAllCategoriesAPI = async (req, res, next) => {
 
     // Nested populate to get all categories in the database and populate subCategories field with subcategories, and Brand for each subCategory
-    const categories = await Category.find().populate([{path: 'subCategories', populate:[{path: 'Brands'}]}]);
+    const categories = await Category.find().populate([{path: 'subcategories', populate:[{path: 'Brands'}]}]);
 
     // Send successful response with status 200 and send a JSON response with a success messga e with categories
     res.status(200).json({ success: true, message: 'Categories fetched successfully', data: categories});
