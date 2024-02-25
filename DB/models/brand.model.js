@@ -23,8 +23,8 @@ const brandSchema = new mongoose.Schema({
     folderId: { type: String, required: true, unique:true},
     addedBy: { type:mongoose.Schema.Types.ObjectId, ref:'User', required: true},
     updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    subCategoryId : {type: mongoose.Schema.Types.ObjectId, ref: 'subCategory', required: true},
-    categoryId: {type: mongoose.Schema.Types.ObjectId, ref: 'category', required: true}
+    subCategoryId : {type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory', required: true},
+    categoryId: {type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true}
 }, {timestamps: true});
 
 /**

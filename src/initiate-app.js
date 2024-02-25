@@ -31,6 +31,8 @@ export const intiateApp = (app, express) => {
     // Set up subCategory routes
     app.use('/subCategory', routers.subCategoryRouter);
 
+    app.use('/brand', routers.brandRouter);
+
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
 
