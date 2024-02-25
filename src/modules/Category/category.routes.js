@@ -16,6 +16,8 @@ router.put('/update-category/:categoryId', auth(endPointsRoles.UPDATE_CATEGORY),
 
 router.get('/get-all-categories', expressAsyncHandler(categoryController.getAllCategoriesAPI));
 
+router.delete('/delete-category/:categoryId', auth(endPointsRoles.DELETE_CATEGORY), expressAsyncHandler(categoryController.deleteCategoryAPI))
+
 export default router;
 
 

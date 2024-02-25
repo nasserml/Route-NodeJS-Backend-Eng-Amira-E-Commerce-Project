@@ -5,7 +5,7 @@ import SubCategory from '../../../DB/models/sub-category.model.js';
 import Brand from '../../../DB/models/brand.model.js';
 import cloudinaryConnection from '../../utils/cloudinary.js';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
-import { createDocumnetByCreate, findDocumentByFindById, findDocumentByFindOne} from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne} from '../../../DB/dbMethods.js';
 // ==================== Add Category API ==============
 /**
  * Add new category to the database eendpoin API.
@@ -165,4 +165,51 @@ export const getAllCategoriesAPI = async (req, res, next) => {
 
     // Send successful response with status 200 and send a JSON response with a success messga e with categories
     res.status(200).json({ success: true, message: 'Categories fetched successfully', data: categories});
+}
+
+// ================= Delete Category API ====================
+/**
+ * Delete category API endpoint and delete all resources from the cloud cloudinary and the data base
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function\
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the category is deleted
+ * 
+ * @throws {Error} If the category was not found
+ * @throws {Error} If the category was not deleted
+ */
+export const deleteCategoryAPI = async (req, res, next) => {
+
+    // 1- Destructuting the categoryId fromthe request params
+    const { categoryId} = req.params;
+
+    // 2- Find and delete the category from the database using the category id
+    const category = await deleteDocumentByFindByIdAndDelete(Category, categoryId);
+
+    // 3-  Check if the category was found if it is not return error that category was  not found 
+    if (!category.success) return next({ cause: 404, message: 'Category not found'});
+
+    // 4- Delete all the subcategory related to this category
+    const subCategories = await SubCategory.deleteMany({categoryId});
+
+    // 5- Check if there were any subcateries if it was not console log that there were no subcategory
+    if (subCategories.deletedCount <= 0 ) console.log('There is no related subcategories');
+
+    // 6- Delete all the brands related to this category from the data base
+    const brands = await Brand.deleteMany({categoryId});
+
+    // 7- Check if there were any related brands deletedf from the database if there were not then console log that there were no brands for this category
+    if (brands.deletedCount <= 0 ) console.log('There is no related brands');
+
+    // 8- Get the folder path fo tr the category in the cloyud
+    const folderPath = `${process.env.MAIN_FOLDER}/Categories/${category.deleteDocument.folderId}`;
+
+    // 9- Delete all the resources and the folder in the category from cloudinatry cloud storage
+    await cloudinaryConnection().api.delete_resources_by_prefix(folderPath);
+    await cloudinaryConnection().api.delete_folder(folderPath);
+
+    // 10- Send successfully response indicating that the category was deleted successfully
+    res.status(200).json({success: true, message: 'Category deleted successfully'});
 }
