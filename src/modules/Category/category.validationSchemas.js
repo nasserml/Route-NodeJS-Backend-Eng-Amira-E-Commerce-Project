@@ -17,5 +17,5 @@ export const updateCategorySchema = {
 
 // Schema validation for delete category API endpoints
 export const deleteCategorySchema = {
-    params: Joi.object({categoryId: generalRules.Joi})
+    params: Joi.object({categoryId: generalRules.dbId})
 }
