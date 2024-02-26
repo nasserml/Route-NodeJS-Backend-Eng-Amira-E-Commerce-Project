@@ -69,7 +69,7 @@ export const addProductAPI = async (req, res, next) => {
     const folderPath = brand.isDocumentExists.Image.public_id.split(`${brand.isDocumentExists.folderId}`)[0];
 
     // 15- Loop through the images and upload them to cloudinary
-    for (const file in req.files) {
+    for (const file of req.files) {
 
         // 15.1- Upload each image to cloudinary and destuct the secure_url and the public id
         const { secure_url, public_id} = await cloudinaryConnection().uploader.upload(file.path, { folder: folderPath + `${brand.isDocumentExists.folderId}/Products/${folderId}`});
@@ -91,7 +91,7 @@ export const addProductAPI = async (req, res, next) => {
     req.saveDocuments = {model: Product, _id: newProduct.createDocument._id};
 
     // 20- Send the response indicating the success of creating product
-    res.status(newProduct.status).JSON({success: newProduct.success, message: 'Product created successfully', data: newProduct});
+    res.status(newProduct.status).json({success: newProduct.success, message: 'Product created successfully', data: newProduct});
 }
 
 //================================== Update product api ==========================
