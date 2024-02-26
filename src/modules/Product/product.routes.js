@@ -18,5 +18,6 @@ router.post('/add-product',validationMiddleware(addProductSchema), auth(endPoint
 
 router.put('/update-product/:productId', validationMiddleware(updateProductSchema),auth(endPointsRoles.UPDATE_PRODUCT), multerMiddleHost({extensions: allowedExtensions.image }).single('image'), expressAsyncHandler(productController.updateProductAPI) );
 
-router.get('/get-all-products', expressAsyncHandler(productController.getAllProductsAPI))
+router.get('/get-all-products', expressAsyncHandler(productController.getAllProductsAPI));
+
 export default router;
