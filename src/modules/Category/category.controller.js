@@ -124,7 +124,7 @@ export const updateCategoryAPI = async (req, res, next) => {
         if (!req.file) return next({cause: 400, message: 'Image is required'});
 
         // 6.2- Split the old public id to get the image file name so that we can overwrite it
-        const newPublicId = oldPublicId.split(`${category.isDocumentExists.folderId}`);
+        const newPublicId = oldPublicId.split(`${category.isDocumentExists.folderId}/`)[1];
 
         // 6.3- Generate folder path for secure url
         const folderPath = `${process.env.MAIN_FOLDER}/Categories/${category.isDocumentExists.folderId}`;
