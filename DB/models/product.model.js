@@ -19,7 +19,7 @@ import mongoose  from 'mongoose';
  * @property {mongoose.Schema.Types.ObjectId} categoryId - The ID of the category of the product
  * @property {mongoose.Schema.Types.ObjectId} subCategoryId - The ID of the subCategory of the product
  * @property {mongoose.Schema.Types.ObjectId} brandId - The ID of the brand of the product 
-* @property {Date} createdAt - The date and time when the product was created.
+ * @property {Date} createdAt - The date and time when the product was created.
  * @property {Date} updatedAt - The date and time when the product was last updated.
  */
 const productSchema = new mongoose.Schema({
