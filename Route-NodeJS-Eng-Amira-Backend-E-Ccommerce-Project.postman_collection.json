@@ -1,0 +1,770 @@
+{
+	"info": {
+		"_postman_id": "d1694a72-f576-479a-9a2d-a252ecd663e5",
+		"name": "Route-NodeJS-Eng-Amira-Backend-E-Ccommerce-Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16297704",
+		"_collection_link": "https://www.postman.com/galactic-water-709147/workspace/route-node-js-baackend/collection/16297704-d1694a72-f576-479a-9a2d-a252ecd663e5?action=share&source=collection_link&creator=16297704"
+	},
+	"item": [
+		{
+			"name": "Auth-APIs",
+			"item": [
+				{
+					"name": "sign-up-API",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"amira\",\r\n    \"email\": \"xonoba3960@mcuma.com\",\r\n    \"password\": \"123\",\r\n    \"cpass\": \"123\",\r\n    \"age\":\"20\",\r\n    \"role\":\"superAdmin\",\r\n    \"phoneNumbers\": [\"01010101\"],\r\n    \"addresses\": [\"Cairo\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/sign-up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "log-in-API",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"xonoba3960@mcuma.com\",\r\n    \"password\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category-APIs",
+			"item": [
+				{
+					"name": "add-category-API",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4Nzk0ODQ5LCJleHAiOjE3MDg4ODEyNDl9.hnN0vRDMLM29bH3lkJ2Yp6It2RZlQiAWSoOM4fVHZ-w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/download.jpg"
+								},
+								{
+									"key": "name",
+									"value": "Electronics",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/category/add-category",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"category",
+								"add-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-category-API",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4Nzk0ODQ5LCJleHAiOjE3MDg4ODEyNDl9.hnN0vRDMLM29bH3lkJ2Yp6It2RZlQiAWSoOM4fVHZ-w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/1607431213-guide-to-finding-out-phone-name.jpeg"
+								},
+								{
+									"key": "name",
+									"value": "Electronics updateed category",
+									"type": "text"
+								},
+								{
+									"key": "oldPublicId",
+									"value": "route-backend-eng-amira-ecommerce-project/Categories/ad5s/vyi62jitomwfrcjfwro2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/category/update-category/65da24b8f0b32d9d8eb382e4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"category",
+								"update-category",
+								"65da24b8f0b32d9d8eb382e4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-categories-API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/category/get-all-categories/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"category",
+								"get-all-categories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4Nzk0ODQ5LCJleHAiOjE3MDg4ODEyNDl9.hnN0vRDMLM29bH3lkJ2Yp6It2RZlQiAWSoOM4fVHZ-w",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/category/delete-category/65da24b8f0b32d9d8eb382e4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"category",
+								"delete-category",
+								"65da24b8f0b32d9d8eb382e4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "sub-Category-API",
+			"item": [
+				{
+					"name": "add-sub-category-API",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4Nzk0ODQ5LCJleHAiOjE3MDg4ODEyNDl9.hnN0vRDMLM29bH3lkJ2Yp6It2RZlQiAWSoOM4fVHZ-w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Phones",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/download.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/subCategory/add-sub-category/65db6d2fa79b8f7d2518e09b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subCategory",
+								"add-sub-category",
+								"65db6d2fa79b8f7d2518e09b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-subcategory-API",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inhvbm9iYTM5NjBAbWN1bWEuY29tIiwiaWQiOiI2NWRmMzBmMDg0N2U5MjE4NDFmYTM2ODgiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA5MTI1OTQyLCJleHAiOjE3MDkyMTIzNDJ9.4727-3ULn0eX0sYQxpf4rIaJbXz7JhxH9fyP-mssS3M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Phone updated",
+									"type": "text"
+								},
+								{
+									"key": "categoryId",
+									"value": "65db6d2fa79b8f7d2518e09b",
+									"type": "text"
+								},
+								{
+									"key": "oldPublicId",
+									"value": "route-backend-eng-amira-ecommerce-project/Categories/5ad3/SubCategories/h4ad/mv9ayangveehbppdj4br",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/iphone-card-40-iphone15prohero-202309_FMT_WHH.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/subCategory/update-sub-category/65db6d7fa79b8f7d2518e0a0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subCategory",
+								"update-sub-category",
+								"65db6d7fa79b8f7d2518e0a0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-sub-categories-with-brands-API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/subCategory/get-all-sub-categories-with-brands",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"subCategory",
+								"get-all-sub-categories-with-brands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-sub-category-API",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "brand-API",
+			"item": [
+				{
+					"name": "add-brand-API",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4ODgzNzM5LCJleHAiOjE3MDg5NzAxMzl9.PZxkcnyOTRIMgu7flhvx6KHQtjlhVZYpcfLb8V8TPkY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Apple",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/overview__bcphzsdb4fpu_og.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/brand/add-brand?categoryId=65db6d2fa79b8f7d2518e09b&subCategoryId=65db6d7fa79b8f7d2518e0a0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"brand",
+								"add-brand"
+							],
+							"query": [
+								{
+									"key": "categoryId",
+									"value": "65db6d2fa79b8f7d2518e09b"
+								},
+								{
+									"key": "subCategoryId",
+									"value": "65db6d7fa79b8f7d2518e0a0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-brand-API",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inhvbm9iYTM5NjBAbWN1bWEuY29tIiwiaWQiOiI2NWRmMzBmMDg0N2U5MjE4NDFmYTM2ODgiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA5MTI1OTQyLCJleHAiOjE3MDkyMTIzNDJ9.4727-3ULn0eX0sYQxpf4rIaJbXz7JhxH9fyP-mssS3M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Apple Update",
+									"type": "text"
+								},
+								{
+									"key": "categoryId",
+									"value": "65db6d2fa79b8f7d2518e09b",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "subCategoryId",
+									"value": "65db6d7fa79b8f7d2518e0a0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "oldPublicId",
+									"value": "route-backend-eng-amira-ecommerce-project/Categories/5ad3/SubCategories/h4ad/Brands/41d4/pgkpm2rq2vf7ijbb0cze",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/disec3b1o-sin-tc3adtulo-3.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/brand/update-brand/65db80c0eaa8a678d1360f7e",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"brand",
+								"update-brand",
+								"65db80c0eaa8a678d1360f7e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-brands-API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/brand/get-all-brands",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"brand",
+								"get-all-brands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-brand-API",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inhvbm9iYTM5NjBAbWN1bWEuY29tIiwiaWQiOiI2NWRmMzBmMDg0N2U5MjE4NDFmYTM2ODgiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA5MTMyMjAyLCJleHAiOjE3MDkyMTg2MDJ9.3UyZEDZcjnNEuHN4-z8OM97l8_dA8pRRt_hZJAjsUPo",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/brand/delete-brand/65df47293decf0294227304f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"brand",
+								"delete-brand",
+								"65df47293decf0294227304f"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product-API",
+			"item": [
+				{
+					"name": "add-product-API",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4ODgzNzM5LCJleHAiOjE3MDg5NzAxMzl9.PZxkcnyOTRIMgu7flhvx6KHQtjlhVZYpcfLb8V8TPkY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Iphone",
+									"type": "text"
+								},
+								{
+									"key": "desc",
+									"value": "Iphone Description",
+									"type": "text"
+								},
+								{
+									"key": "basePrice",
+									"value": "10000",
+									"type": "text"
+								},
+								{
+									"key": "discount",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "400",
+									"type": "text"
+								},
+								{
+									"key": "specs",
+									"value": "{\"color\":[\"red\"], \"sizes\": [124]}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/download.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/product/add-product?categoryId=65db6d2fa79b8f7d2518e09b&subCategoryId=65db6d7fa79b8f7d2518e0a0&brandId=65db80c0eaa8a678d1360f7e",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"product",
+								"add-product"
+							],
+							"query": [
+								{
+									"key": "categoryId",
+									"value": "65db6d2fa79b8f7d2518e09b"
+								},
+								{
+									"key": "subCategoryId",
+									"value": "65db6d7fa79b8f7d2518e0a0"
+								},
+								{
+									"key": "brandId",
+									"value": "65db80c0eaa8a678d1360f7e"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-product-API",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA4ODgzNzM5LCJleHAiOjE3MDg5NzAxMzl9.PZxkcnyOTRIMgu7flhvx6KHQtjlhVZYpcfLb8V8TPkY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Iphone updated",
+									"type": "text"
+								},
+								{
+									"key": "desc",
+									"value": "Iphone Description updated",
+									"type": "text"
+								},
+								{
+									"key": "basePrice",
+									"value": "5000",
+									"type": "text"
+								},
+								{
+									"key": "discount",
+									"value": "30",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "4004",
+									"type": "text"
+								},
+								{
+									"key": "specs",
+									"value": "{\"color\":[\"red\"], \"sizes\": [124]}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nasser/Pictures/download.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/product/update-product/65dcb4f7fb866cca3c388420",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"product",
+								"update-product",
+								"65dcb4f7fb866cca3c388420"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-products-API",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/product/get-all-products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"product",
+								"get-all-products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user-APIs",
+			"item": [
+				{
+					"name": "updae-user-API",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA5MTI0NTk4LCJleHAiOjE3MDkyMTA5OTh9.vxHjMfyPWpWMkYlgL1c9NZJTwaE8XHWUbTRJPrTylyM",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"amira updated\",\r\n    \"email\": \"xonoba3960@mcuma.com\",\r\n    \"oldPassword\": \"123\",\r\n    \"newPassword\": \"123\",\r\n    \"cpass\": \"123\",\r\n    \"age\": \"20\",\r\n    \"phoneNumbers\": [\"010101010000\", \"1234566774012\"],\r\n    \"addresses\": [\"cairo updated\", \"maadi updated\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/user/update-user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"update-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-user-API",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhamVqYXI4MjRAbW9seWcuY29tIiwiaWQiOiI2NWRhMDg5YmZjY2I0YzM5YzQzZGE3ZTQiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA5MTI0NTk4LCJleHAiOjE3MDkyMTA5OTh9.vxHjMfyPWpWMkYlgL1c9NZJTwaE8XHWUbTRJPrTylyM",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/user/delete-user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"delete-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-user-profile-data-API",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accesstoken",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inhvbm9iYTM5NjBAbWN1bWEuY29tIiwiaWQiOiI2NWRmMzBmMDg0N2U5MjE4NDFmYTM2ODgiLCJsb2dnZWRJbiI6dHJ1ZSwiaWF0IjoxNzA5MTI1OTQyLCJleHAiOjE3MDkyMTIzNDJ9.4727-3ULn0eX0sYQxpf4rIaJbXz7JhxH9fyP-mssS3M",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/user/get-user-profile-data/65df30f0847e921841fa3688",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"get-user-profile-data",
+								"65df30f0847e921841fa3688"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
