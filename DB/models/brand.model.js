@@ -25,7 +25,9 @@ const brandSchema = new mongoose.Schema({
     updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     subCategoryId : {type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory', required: true},
     categoryId: {type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true}
-}, {timestamps: true});
+}, {timestamps: true,toJSON:{virtuals: true}, toObject:{virtuals: true}   });
+
+brandSchema.virtual('Products', {ref: 'Product', localField: '_id', foreignField: 'brandId'});
 
 /**
  * Exports the brand model to be used 

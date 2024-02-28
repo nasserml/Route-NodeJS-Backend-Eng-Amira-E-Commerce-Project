@@ -3,6 +3,7 @@ import categoryRouter from './Category/category.routes.js';
 import subCategoryRouter from './Sub-category/sub-category.routes.js';
 import brandRouter from './Brand/brand.routes.js';
 import productRouter from './Product/product.routes.js';
+import userRouter from './User/user.routes.js'
 
 // Export all routes
-export { authRouter, categoryRouter , subCategoryRouter, brandRouter, productRouter};
+export { authRouter, categoryRouter , subCategoryRouter, brandRouter, productRouter, userRouter};
