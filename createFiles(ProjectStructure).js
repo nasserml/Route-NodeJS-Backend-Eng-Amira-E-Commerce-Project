@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 
 // List of entities
-const entities = ['user', 'brand', 'cart', 'category', 'product', 'sub-category'];
+const entities = ['user', 'brand', 'cart', 'category', 'product', 'sub-category', 'coupon', 'order'];
 
 // List of common files
 const list_of_files = [
