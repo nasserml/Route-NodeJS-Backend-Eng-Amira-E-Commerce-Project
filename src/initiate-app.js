@@ -40,6 +40,9 @@ export const intiateApp = (app, express) => {
     // Set up user routes
     app.use('/user', routers.userRouter);
 
+    // Set up cart routes
+    app.use('/cart', routers.cartRouter)
+
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
 
