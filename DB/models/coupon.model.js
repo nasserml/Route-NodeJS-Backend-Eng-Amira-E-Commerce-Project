@@ -6,7 +6,7 @@ const couponSchema = new mongoose.Schema({
     couponAmount : { type: Number, required: true, min: 1},
     couponStatus: { type: String, enum: ['valid', 'expired'], default: 'valid'},
     isFixed: { type: Boolean},
-    isPrecentage: { type: Boolean},
+    isPercentage: { type: Boolean},
     fromDate: { type: String, required: true},
     toDate : { type: String, required: true},
     addedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
