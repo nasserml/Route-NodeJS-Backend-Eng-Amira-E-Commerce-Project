@@ -10,3 +10,7 @@ export const addProductToCartSchema = {
         quantity: Joi.number().min(1).required()
     }).and('productId', 'quantity')
 }
+
+export const removeProductFromCartSchema = {
+    params: Joi.object({productId: generalRules.dbId})
+}

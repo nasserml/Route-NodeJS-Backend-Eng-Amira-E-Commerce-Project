@@ -1,5 +1,5 @@
 import Cart from '../../../DB/models/cart.model.js';
-import {} from '../../../DB/dbMethods.js';
+import { deleteDocumentByFindByIdAndDelete, findDocumentByFindOne } from '../../../DB/dbMethods.js';
 
 import {addCart} from './utils/add-cart.js';
 import {pushNewProduct, pushNewProductV2} from './utils/add-product-to-cart.js';
@@ -65,7 +65,7 @@ export const addProductToCartAPI = async (req, res, next) => {
     if(!isUpdated) { 
 
         // 8-1- Add the product to the cart
-        const added = await pushNewProduct(userCart, productId, quantity);
+        const added = await pushNewProduct(userCart, product, quantity);
 
         // 8.2- Check if the product is added to the cart if not return an error
         if(!added) return next({ message: 'Product not added to cart', cause: 400});
@@ -73,4 +73,80 @@ export const addProductToCartAPI = async (req, res, next) => {
 
     // 9- Send successful response with the updated cart
     res.status(200).json({ message: 'Product added to cart successfully', data: userCart });
+}
+
+// =========================== Remove product from the cart ===============================
+/**
+ * @param {productId} from req.params
+ * @param {userId} from req.authUser
+ * @description Update the cart by removing the specified product from the user's cart.
+ * @returns Success resrespone that the product is removed from the cart
+ * 
+ * @throws 404 - If the product not found in the cart
+ * @throws 500 - If any error occurs while removing the product
+ * 
+ */
+export const removeProductFromCartAPI = async (req, res, next) => {
+
+    // 1- Destructuring the productId from the request params
+    const { productId} = req.params;
+
+    //  2- Destructuring the userID from the request authUser
+    const { _id} = req.authUser;
+
+    // 3- Get the user's cart based on the userID and the productId
+    const userCart = await findDocumentByFindOne(Cart, { userId: _id, 'products.productId': productId});
+
+    // 4- IF either the user has no cart or the product not found in the cart return an error 
+    if(!userCart.success) return next({ message : 'Product not found in cart', cause: 404 });
+
+    // 5- Remove the product from the cart based on the productId
+    userCart.isDocumentExists.products = userCart.isDocumentExists.products.filter( product => product.productId.toString() !== productId  );
+
+    // 6- Update the subtotal in the cart
+    userCart.isDocumentExists.subTotal = calculateSubTotal(userCart.isDocumentExists.products);
+
+    // 7- Save the cart
+    const newCart = await userCart.isDocumentExists.save();
+
+    // 8- If the cart is empty delete it 
+    if(newCart.products.length === 0) await deleteDocumentByFindByIdAndDelete(Cart, newCart._id);
+
+    // 9- Send successful response that the product is removed from the cart
+    res.status(201).json( { message: 'Product delete from the cart successfully' } );
+}
+
+
+//======================== Another way to make the add to cart API more efficient ===============================
+
+export const addProductToCartEnhanceAPI = async (req, res, next) => {
+
+    const { productId, quantity } = req.body;
+
+    const { _id } = req.authUser;
+
+    const product = await checkProductAvailability(productId, quantity);
+
+    if(!product) return next({ message : 'Product not found or not available', cause: 404 } );
+
+    const userCart =  await getUserCart(_id);
+
+    if(!userCart) {
+
+        const newCart = await addCart(_id, product, quantity);
+
+        return res.status(201).json( { message: 'Product added to cart successfully', data: newCart });
+    }
+
+    let newCartProducts = await updateProductQuantityV2(userCart, productId, quantity );
+
+    if(!newCartProducts) newCartProducts = await pushNewProductV2( userCart, product, quantity );
+
+    userCart.products = newCartProducts;
+
+    userCart.subTotal = calculateSubTotal( userCart.products );
+
+    await userCart.save();
+
+    res.status(201).json( { message: 'Product added to cart successfully', data: userCart } );
 }
