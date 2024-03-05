@@ -118,35 +118,69 @@ export const removeProductFromCartAPI = async (req, res, next) => {
 
 
 //======================== Another way to make the add to cart API more efficient ===============================
-
+/**
+ * @description Add product to cart enhance API endpoints
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res  - Express response object.
+ * @param {import('express').NextFunction} next - Express next function.
+ * @param { productId, quantity} from req.body
+ * @param {userId} from req.authUser
+ * @returns {import('express').Response} JSON response - Returns success response that the product added to cart successfully.
+ * 
+ * @throws {Error} If the product not found or not available.
+ * @throws {Error} If an error occured during adding the product to the cart.
+ */
 export const addProductToCartEnhanceAPI = async (req, res, next) => {
 
+    // 1- Destructuring the productId and quantity from the request body
     const { productId, quantity } = req.body;
 
+    // 2- Destructuring the userId from request authUser
     const { _id } = req.authUser;
 
+    /**
+     * @check 3-If the product exists and if it's avaliable
+     */
     const product = await checkProductAvailability(productId, quantity);
 
+    // 4- If it is not found nor available  return an error
     if(!product) return next({ message : 'Product not found or not available', cause: 404 } );
 
+    /**
+     * @check 5- If the user has cart
+     */
     const userCart =  await getUserCart(_id);
 
+    /**
+     * @check 6- If the user has no cart, create a new cart and add the product to it
+     */
     if(!userCart) {
 
+        // 6.1- Create a new cart and add the product
         const newCart = await addCart(_id, product, quantity);
 
+        // 6.2- Return success response that the product added to cart successfully
         return res.status(201).json( { message: 'Product added to cart successfully', data: newCart });
     }
 
+    /**
+     * @returns 7- The cart state after modifying its producta array to reflect the updated quantities and subtotals
+     * @check If the returned value is null, then the product is not found in the cart and it will be added
+     */
     let newCartProducts = await updateProductQuantityV2(userCart, productId, quantity );
 
+    // 8- If the returned value is null, then the product is not found in the cart and it will be added
     if(!newCartProducts) newCartProducts = await pushNewProductV2( userCart, product, quantity );
 
+    // 9- Update the usercart products with the new cartProducts
     userCart.products = newCartProducts;
 
+    // 10- Update the userCart subtotal
     userCart.subTotal = calculateSubTotal( userCart.products );
 
+    // 11- Save the userCart with the new products and subtotal
     await userCart.save();
 
+    // 12- Send success response that the product added to cart successfully
     res.status(201).json( { message: 'Product added to cart successfully', data: userCart } );
 }
