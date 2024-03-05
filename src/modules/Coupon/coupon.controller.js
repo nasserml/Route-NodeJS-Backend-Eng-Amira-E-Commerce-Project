@@ -4,6 +4,7 @@ import { createDocumnetByCreate, findDocumentByFind, findDocumentByFindOne } fro
 
 import User from '../../../DB/models/user.model.js';
 
+import { couponValidation } from '../../utils/coupon-validation.js';
 
 // ===================== Add coupon API =======================
 /**
@@ -71,4 +72,34 @@ export const addCouponAPI = async (req, res, next ) => {
 
     // 14- Sned success response that the coupon is added successfully
     res.status(201).json( { message : 'Coupon added successfully', newCoupon: newCoupon.createDocument, couponUsers: couponUsers.createDocument });
+}
+
+/**
+ * @description Apply coupon API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Returns success response that the coupon is applied successfully
+ * 
+ * @throws {Error} If the coupon is not valid
+ * @throws {Error} If the coupon is not found
+ */
+export const applyCouponAPI = async (req, res, next)=>{
+
+    // 1- Destructuring couponCode from the request body
+    const {couponCode} = req.body;
+
+    // 2- Destructuring _id as userId from the request authUser
+    const {_id:userId} = req.authUser;
+
+    // 3- Call coupon validation function
+    const couponCheck = await couponValidation(couponCode,userId);
+
+    // 4- If the coupon is not valid return error
+    if(couponCheck.status) return next({message:couponCheck.message,cause:couponCheck.status});
+
+    // 5- Return success response that the coupon is applied successfully
+    res.status(200).json({message:'Coupon applied successfully'});
 }

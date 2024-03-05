@@ -15,3 +15,10 @@ export const addCouponSchema = {
             maxUsage: Joi.number().required().min(1) } ) ).required()
     })
 }
+
+// Schema validation for apply coupon api 
+export const applyCouponSchema = {
+    body: Joi.object({
+        couponCode: Joi.string().required().min(3).max(30).alphanum()
+    })
+}

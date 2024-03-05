@@ -12,4 +12,6 @@ const router = Router();
 
 router.post('/add-coupon', validationMiddleware( validators.addCouponSchema ), auth( endpointsRoles.ADD_COUPON ) , expressAsyncHandler( couponController.addCouponAPI ) );
 
+router.get('/apply-coupon',validationMiddleware(validators.applyCouponSchema),auth(endpointsRoles.APPLY_COUPON),expressAsyncHandler(couponController.applyCouponAPI));
+
 export default router;
