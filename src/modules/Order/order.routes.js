@@ -12,4 +12,5 @@ const router=Router();
 
 router.post('/create-order',validationMiddleware(validators.createOrderSchema),auth(endPointsRoles.CREATE_ORDER),expressAsyncHandler(orderController.createOrderAPI));
 
+router.post('/convert-from-cart-to-order',validationMiddleware(validators.convertFromCartToOrderSchema),auth(endPointsRoles.CONVERT_FROM_CART_TO_ORDER),expressAsyncHandler(orderController.convertFromCartToOrderAPI));
 export default router;
