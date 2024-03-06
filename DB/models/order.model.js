@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema({
     totalPrice: { type: Number, required: true},
 
     paymentMethod: { type: String, enum: ['Cash', 'Stripe', 'Paymob'], required: true},
-    oderStatus: {type: String, enum: ['Pending', 'Paid', 'Delivered','Placed', 'Canceled', 'Refunded'], required: true, default: 'Pending' },
+    orderStatus: {type: String, enum: ['Pending', 'Paid', 'Delivered','Placed', 'Canceled', 'Refunded'], required: true, default: 'Pending' },
 
     isPaid: { type: Boolean, required: true, default: false},
     paidAt:{type: String},

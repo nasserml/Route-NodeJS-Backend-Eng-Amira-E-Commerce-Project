@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true, minlength: 8,},
     phoneNumbers: [{ type: String, required: true,}],
     addresses: [{ type: String, required: true}],
-    role: { type: String, enum: [systemRoles.USER, systemRoles.ADMIN, systemRoles.SUPER_ADMIN], default: systemRoles.USER},
+    role: { type: String, enum: Object.values(systemRoles), default: systemRoles.USER},
     
     /** Boolean */
     isEmailVerified: { type: Boolean, default: false },
