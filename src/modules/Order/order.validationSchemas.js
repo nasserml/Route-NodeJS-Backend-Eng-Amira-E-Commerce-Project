@@ -28,3 +28,8 @@ export const convertFromCartToOrderSchema={
         phoneNumbers:Joi.array().items(Joi.string().required()).required(),
     })
 }
+
+// Schema validation for deliver order API endpoint
+export const deliverOrderSchema={
+    params:Joi.object({orderId:generalRules.dbId.required()})
+}

@@ -9,7 +9,7 @@ import CouponUsers from '../../../DB/models/coupon-users.model.js';
 import Product from '../../../DB/models/product.model.js';
 
 import { checkProductAvailability } from '../Cart/utils/check-product-in-db.js';
-import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
 //===============================Create order API =========================
 /**
  * @description Create order APi endpoint
@@ -219,4 +219,33 @@ export const convertFromCartToOrderAPI=async(req,res,next)=>{
 
     // 19- Return success response that the order is created
     res.status(201).json({message:'Order created successfuly', order: order.createDocument})
+}
+
+/**
+ * @description Deliver order API endpoint
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns {import('express').Response.json} JSON response - Returns success response that the order is delivered
+ * 
+ * @throws {Error} If the order is not found
+ * @throws {Error} If the order is not placed
+ * @throws {Error} If the order is not delivered
+ */
+export const deliverOrderAPI=async(req,res,next)=>{
+
+    // 1- Destructuring order id from the request params
+    const{orderId}=req.params;
+
+    // 2- Destructuring the delivered by from the request authUser
+    const{_id:deliveredBy}=req.authUser;
+
+    // 3- Update the order status in the database using the order id and order status as delivered and delivered at and delivered by
+    const order=await updateDocumentByFindOneAndUpdate(Order,{_id:orderId,orderStatus:'Placed'},{orderStatus:'Delivered',isDelivered:true,deliveredAt:DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'),deliveredBy},{new:true});
+
+    // 4- Check if the order is updated successfully if not return error
+    if(!order.success)return next({message:'Fail to deliver please check order status', status:404});
+    
+    // 5- Return success response that the order is delivered 
+    res.status(200).json({message:'Order delivered successfully',order:order.updateDocument})
 }
