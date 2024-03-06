@@ -40,7 +40,7 @@ export const signUpAPI =async (req, res, next) => {
      const userToken = jwt.sign({email}, process.env.JWT_SECRET_VERFICATION, { expiresIn: '2m'});
 
      // 3- send a confirmation email to the user
-     const isEmailSent = await sendEmailService({to: email, subject: 'Email Verification', message: `<h2>please click on this link to verfiy your email</h2><a href="http://localhost:3000/auth/verfiy-email?token=${userToken}">Verfiy Email</a>`});
+     const isEmailSent = await sendEmailService({to: email, subject: 'Email Verification', message: `<h2>please click on this link to verfiy your email</h2><a href="${req.protocol}://${req.headers.host}:3000/auth/verfiy-email?token=${userToken}">Verfiy Email</a>`});
 
      // 4- check if the email is sent suiccessfully
      if(!isEmailSent) return next(new Error('Email is not sent please try again later', { cause: 500}));
