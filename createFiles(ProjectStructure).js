@@ -36,10 +36,14 @@ const list_of_files = [
     "src/utils/general.validation.rule.js",
     "src/utils/generateOTP.js",
     "src/utils/api-features.js",
+    "src/utils/qr-code.js",
 
 
     // Services
     "src/services/send-email.service.js",
+
+    // Payments
+    "src/payment-handler/stripe.js",
 
     // Initiate app 
     "src/initiate-app.js",
