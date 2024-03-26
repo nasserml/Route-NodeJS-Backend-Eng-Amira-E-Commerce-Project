@@ -37,6 +37,7 @@ const list_of_files = [
     "src/utils/generateOTP.js",
     "src/utils/api-features.js",
     "src/utils/qr-code.js",
+    "src/utils/pdf-kit.js",
 
 
     // Services
