@@ -91,15 +91,61 @@ function generateCustomerInformation(doc,invoice){
 
 }
 
+/**
+ * Generate the invoice table in the invoice document pdf 
+ * 
+ * @param {PDFDocument} doc - The invoice pdf document to generate the table in.
+ * @param {object} invoice - The invoice object containing the data for the table.
+ */
 function generateInvoiceTable(doc,invoice){
-    
+    // Initialize variable i
     let i;
 
+    // Initialize the tiop position of the invoice table
     const invoiceTableTop=330;
 
+    // Set the font style to Helvetica-Bold
     doc.font('Helvetica-Bold');
 
+    // Generate the header row of the table 
     generateTableRow(doc,invoiceTableTop,'Item','Unit Cost','Quantity','Line Total');
+    
+    // Generate a horizontal line below the header row
+    generateHr(doc,invoiceTableTop+20);
+
+    // Set the fiont style in the document to Helvetica
+    doc.font('Helvetica')
+
+    // Loop through eact item in the invoice to generate a table row for each item
+    for(i=0;i<invoice.items.length;i++){
+
+        // Get the current item
+        const item=invoice.items[i];
+
+        // Calculate the position of the row based on the current item index
+        const position=invoiceTableTop+(i+1)*30;
+        
+        // generate table row for the cuurent item
+        generateTableRow(doc,position,item.title,formatCurrency(item.price),item.quantity,formatCurrency(item.finalPrice));
+
+        // Generate a horizontal line below the table row
+        generateHr(doc,position+20);
+    }
+
+    // Calculate the position of the subtiotal row
+    const subTotalPosition=invoiceTableTop+(i+1)*30;
+
+    // Generate the table row for the subtotal
+    generateTableRow(doc,'','','Paid Amount','',formatCurrency(invoice.subTotal));
+
+    // Calculate the position of the paiod amount row
+    const paidAmountPosition=subTotalPosition+20;
+
+    // Generate table row for the paid amount
+    generateTableRow(doc,paidAmountPosition,'','','Paid Amount','',formatCurrency(invoice.paidAmount));
+
+    // Set the font stly of the document back to Helvtica
+    doc.font('Helvetica');
 
 }
 
@@ -126,7 +172,7 @@ function generateTableRow(doc,y,item,description,unitCost,quantity,lineTotal){
 
 
 function generateFooter(doc){
-    
+
 }
 
 /**
