@@ -170,9 +170,15 @@ function generateTableRow(doc,y,item,description,unitCost,quantity,lineTotal){
         .text(lineTotal,0,y,{align:'right'}) // Add lineTotal with alignment right at (0,y)
 }
 
-
+/**
+ * Generates a footer for the document.
+ * 
+ * @param {PDFDocument} doc - The pdf document to add the footer to
+ */
 function generateFooter(doc){
 
+    // Set the font size to 10, and write text to the center bottom of the page with width of 500 pixels and add align the text to the center
+    doc.fontSize(10).text('Payment is due within 15 days. Thanks you for your businees.',50,780,{align:'center',width:500});
 }
 
 /**
