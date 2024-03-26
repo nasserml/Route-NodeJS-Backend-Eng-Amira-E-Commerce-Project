@@ -52,6 +52,9 @@ const list_of_files = [
     // Index routes 
     "src/modules/index.routes.js",
     
+    // Files for pdf invoice
+    "Files/pdf-invoice-test.pdf",
+    
     // Index
     "index.js"
 ];

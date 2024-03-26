@@ -23,7 +23,7 @@ function createInvoice(invoice, pathVar) {
     generateInvoiceTable(doc,invoice);
 
     // Generate the footer of the pfd document
-    `generateFooter`(doc);
+    generateFooter(doc);
 
     // End the pdf document close the stream
     doc.end();
@@ -46,9 +46,9 @@ function generateHeader(doc) {
         .text('Route',110,57) // Write the company name 'Route' to the top center of the document
         .fillColor('#09c') // Set the text color to blue
         .fontSize(10) // Set the text font size to 10
-        .text('Route',200,50,{align:'left'}) // Writ ethe company name 'Route' to the top  left corner of the document with the text algined to the left
-        .text('6 tahrir street',200,65,{align:'left'}) // Write the company address to the top left corner odf the document with text aligned to ythe left
-        .text('Cairo,Egypt',200,80,{align:'left'}) //write the company address to the top left corner of the document with text aligned to left
+        .text('Route',200,50,{align:'right'}) // Writ ethe company name 'Route' to the top  left corner of the document with the text algined to the right
+        .text('6 tahrir street',200,65,{align:'right'}) // Write the company address to the top left corner odf the document with text aligned to ythe right
+        .text('Cairo,Egypt',200,80,{align:'right'}) //write the company address to the top left corner of the document with text aligned to right
         .moveDown(); // Start a new line.
 }
 
@@ -126,7 +126,7 @@ function generateInvoiceTable(doc,invoice){
         const position=invoiceTableTop+(i+1)*30;
         
         // generate table row for the cuurent item
-        generateTableRow(doc,position,item.title,formatCurrency(item.price),item.quantity,formatCurrency(item.finalPrice));
+        generateTableRow(doc,position,item.title,formatCurrency(item.price),item.quantity,formatCurrency(item.price*item.quantity));
 
         // Generate a horizontal line below the table row
         generateHr(doc,position+20);
@@ -136,7 +136,7 @@ function generateInvoiceTable(doc,invoice){
     const subTotalPosition=invoiceTableTop+(i+1)*30;
 
     // Generate the table row for the subtotal
-    generateTableRow(doc,'','','Paid Amount','',formatCurrency(invoice.subTotal));
+    generateTableRow(doc,subTotalPosition,'','','Subtotlal','',formatCurrency(invoice.subTotal));
 
     // Calculate the position of the paiod amount row
     const paidAmountPosition=subTotalPosition+20;
@@ -165,7 +165,7 @@ function generateTableRow(doc,y,item,description,unitCost,quantity,lineTotal){
         .fontSize(10) // Set the font size to 10 
         .text(item,50,y) // Add item name at (50,y)
         .text(description,150,y) // Add item description at (150,y)
-        .tex(unitCost,280,y,{width:90,align:'right'}) // Add unit coost with width of 90 and alignmet right at (370,y)
+        .text(unitCost,280,y,{width:90,align:'right'}) // Add unit coost with width of 90 and alignmet right at (370,y)
         .text(quantity,370,y,{width:90,align:'right'}) // Add quantity with the width of 90 and alignment righ at (370,y)
         .text(lineTotal,0,y,{align:'right'}) // Add lineTotal with alignment right at (0,y)
 }

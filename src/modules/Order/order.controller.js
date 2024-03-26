@@ -10,6 +10,9 @@ import Product from '../../../DB/models/product.model.js';
 
 import { checkProductAvailability } from '../Cart/utils/check-product-in-db.js';
 import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
+import generateUniqueString from '../../utils/generate-Unique-String.js';
+import createInvoice from '../../utils/pdf-kit.js';
+import sendEmailService from '../../services/send-email.service.js';
 //===============================Create order API =========================
 /**
  * @description Create order APi endpoint
@@ -109,7 +112,19 @@ export const createOrderAPI = async (req,res,next)=>{
         await userCoupon.isDocumentExists.save();
     }
     
-    // 21- Send response with success message and order and qrcode
+    // 21- Create order code for invoice pdf files
+    const orderCode=`${req.authUser.username}_${generateUniqueString(3)}`
+
+    // 22- Create order invoice object
+    const orderInvoiceObject={shipping:{name:req.authUser.username,address:order.createDocument.shippingAddress.address,city:'Cairo city',state:'Cairo state',country:'Egypt'},orderCode,date:order.createDocument.createdAt,items:order.createDocument.orderItems,subTotal:order.createDocument.shippingPrice,paidAmount:order.createDocument.totalPrice};
+    
+    // 23- Create invoice pdf document 
+    await createInvoice(orderInvoiceObject,`${orderCode}.pdf`);
+
+    // 24- Send email to user with invoice pdf documents as attachment
+    await sendEmailService({to:req.authUser.email,subject:'Order Confirmation',message:'<h1>Please find your invoice pdf bellow</h1>',attachments:[{path:`./Files/${orderCode}.pdf`}]})
+    
+    // 25- Send response with success message and order and qrcode
     res.status(order.status).json({message:'Order created successfully',order:order.createDocument, qrcode});
 
 }
