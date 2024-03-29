@@ -15,4 +15,11 @@ router.post('/create-order',validationMiddleware(validators.createOrderSchema),a
 router.post('/convert-from-cart-to-order',validationMiddleware(validators.convertFromCartToOrderSchema),auth(endPointsRoles.CONVERT_FROM_CART_TO_ORDER),expressAsyncHandler(orderController.convertFromCartToOrderAPI));
 
 router.put('/deliver-order/:orderId', validationMiddleware(validators.deliverOrderSchema),auth(endPointsRoles.DELIVER_ORDER),expressAsyncHandler(orderController.deliverOrderAPI))
+
+router.post('/stripe-pay/:orderId', validationMiddleware(validators.stripePaySchema),auth(endPointsRoles.STRIPE_PAY),expressAsyncHandler(orderController.payWithStripeAPI));
+
+router.post('/webhook',expressAsyncHandler(orderController.stripeWebhookLocalAPI));
+
+router.post('/refund-order/:orderId',validationMiddleware(validators.refundOrderSchema),auth(endPointsRoles.REFUND_ORDER),expressAsyncHandler(orderController.refundOrderAPI));
+
 export default router;

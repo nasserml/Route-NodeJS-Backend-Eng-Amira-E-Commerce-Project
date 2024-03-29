@@ -49,6 +49,8 @@ export const intiateApp = (app, express) => {
     // Set up order routes
     app.use('/order',routers.orderRouter);
 
+    app.use('*',(req,res,next)=>{res.status(404).json({message:'Not Found'})})
+
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
 

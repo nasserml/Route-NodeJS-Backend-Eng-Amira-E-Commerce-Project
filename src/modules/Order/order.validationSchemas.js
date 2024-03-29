@@ -33,3 +33,13 @@ export const convertFromCartToOrderSchema={
 export const deliverOrderSchema={
     params:Joi.object({orderId:generalRules.dbId.required()})
 }
+
+// Schema validation for deliver order API endpoint
+export const stripePaySchema={
+    params:Joi.object({orderId:generalRules.dbId.required()})
+}
+
+// schema validation for refund order API endpoint
+export const refundOrderSchema={
+    params:Joi.object({orderId:generalRules.dbId.required()})
+}

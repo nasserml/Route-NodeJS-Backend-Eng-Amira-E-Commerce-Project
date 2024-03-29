@@ -9,10 +9,11 @@ import CouponUsers from '../../../DB/models/coupon-users.model.js';
 import Product from '../../../DB/models/product.model.js';
 
 import { checkProductAvailability } from '../Cart/utils/check-product-in-db.js';
-import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne, updateDocumentByFinByIdAndUpdate, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
 import createInvoice from '../../utils/pdf-kit.js';
 import sendEmailService from '../../services/send-email.service.js';
+import { confirmPaymentIntent, createCheckoutSession, createPaymentIntent, createStripeCoupon, refundPaymentIntent } from '../../payment-handler/stripe.js';
 //===============================Create order API =========================
 /**
  * @description Create order APi endpoint
@@ -263,4 +264,140 @@ export const deliverOrderAPI=async(req,res,next)=>{
     
     // 5- Return success response that the order is delivered 
     res.status(200).json({message:'Order delivered successfully',order:order.updateDocument})
+}
+
+// ================ Order payment with stripe API ================
+/**
+ * @description Pay with stripe API endpoint role
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns {import('express').Response.json} JSON response - Returns success response that the order is paid
+ * 
+ * @throws {Error} If the order is not found
+ * @throws {Error} If the order coupon is not valid
+ */
+export const payWithStripeAPI=async(req,res,next)=>{
+    
+    // Extract order id from the request params
+    const {orderId}=req.params;
+    
+    // Extract userId from the request authUser
+    const{_id:userId}=req.authUser;
+
+    // Find the order in the database using the order id and user id and order status as pending
+    const order=await findDocumentByFindOne(Order,{_id:orderId,user:userId,orderStatus:'Pending'});
+    
+    // Check if the order is found if not return error
+    if(!order.success) return next({message:'Order not fount or cannot be paid',cause:404});
+
+    // Construct the order object for stripe
+    const paymentObject={customer_emil:req.authUser.email,metadata:{orderId:order.isDocumentExists._id.toString()},discounts:[],line_items:order.isDocumentExists.orderItems.map(item=>{return{price_data:{currency:'EGP',product_data:{name:item.title},unit_amount:item.price*100},quantity:item.quantity}})};
+
+    // check coupon
+    if(order.isDocumentExists.coupon) {
+
+        // Create stripe coupon 
+        const stripeCoupon=await createStripeCoupon({couponId:order.isDocumentExists.coupon});
+        
+        // Check the created stripe coupon if not valid return error
+        if(stripeCoupon.status) return next({message:stripeCoupon.message,cause:400});
+
+        // Add the coupon to the payment object
+        paymentObject.discounts.push({coupon:stripeCoupon.id})
+    }
+
+    // Create checkout session with the payment object
+    const checkoutSession=await createCheckoutSession(paymentObject);
+
+    // Create payment intent with the amount and currency
+    const paymentIntent=await createPaymentIntent({amount:order.isDocumentExists.totalPrice,currency:'EGP'});
+
+    // Update the order in the database using the payment intent id
+    order.isDocumentExists.payment_intent=paymentIntent.id;
+
+    // Save the order in the database
+    await order.isDocumentExists.save();
+
+    // Send success reponse with chekout session and payment intent
+    res.status(200).json({checkoutSession,paymentIntent});
+}
+
+//================= apply webhook locally toconfirm the order ========================
+/**
+ * @description Stripe web hook locally toconfirm the order with stripe and confirm payment for the order API Endpoin
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns {import('express').Response.json} JSON response - That the webhooked recieved
+ * 
+ * @throws {Error} if the order is not found
+ */
+export const stripeWebhookLocalAPI=async (req,res,next)=>{
+    
+    //  Ectract the order id from the metadata order id
+    const orderId=req.body.data.object.metadata.orderId;
+
+    // Find the order in the database
+    const confirmedOrder=await findDocumentByFindById(Order,orderId)
+    
+    // If the order is not found return error
+    if(!confirmedOrder.success) return next({message:'Order not found',cause:404});
+
+    // Confiorm the payment intent for the order  
+    const confirmPaymentIntentDetails=await confirmPaymentIntent({paymentIntentId:confirmedOrder.isDocumentExists.payment_intent});
+    
+    // Log the details of the confirmed payment intent
+    console.log({confirmPaymentIntentDetails});
+
+    // Update the order in the database is paid to true 
+    confirmedOrder.isDocumentExists.isPaid=true;
+
+    // Update the order in the database with the paid at date now
+    confirmedOrder.isDocumentExists.paidAt=DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
+
+    // Update the order in the database with the order status as paid
+    confirmedOrder.isDocumentExists.orderStatus='Paid';
+
+    // Save the order in the database 
+    await confirmedOrder.isDocumentExists.save();
+
+    // Send succes response with status 200 and send a JSON response with a success message that the webhook is recieved
+    res.status(200).json({message:'webhook received'});
+}
+
+/**
+ * Refund the order API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns {import('express').Response.json} JSON response - Returns success response that the order is refunded
+ * 
+ * @throws {Error} If the order is not found or cannot be refunded
+ */
+export const refundOrderAPI=async (req,res,next)=>{
+
+    // Extract the order id from the request parameters
+    const{orderId}=req.params;
+
+    // Find the order in the database using the order id and order status as paid and user as the auth user
+    const findOrder=await findDocumentByFindOne(Order,{_id:orderId,orderStatus:'Paid',user:req.authUser._id});
+
+    // Check if the order exitst in the database if not return an error 
+    if(!findOrder.success) return next({message:'Order not found or cannot be refundded',cause:404});
+
+    // Refund the payment intents for the order usein the payment intent id
+    const refund=await refundPaymentIntent({paymentIntentId:findOrder.isDocumentExists.payment_intent});
+
+    // Update the order Status in the databse to Refunded
+    findOrder.isDocumentExists.orderStatus='Refunded';
+    
+    // Save the order in the databasse
+    await findOrder.isDocumentExists.save();
+
+    // Return success response that the order is refunded
+    res.status(200).json({message:'Order Refunded successfully',order:refund});
 }
