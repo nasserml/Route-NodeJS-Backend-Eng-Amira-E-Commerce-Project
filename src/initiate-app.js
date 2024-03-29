@@ -1,9 +1,11 @@
+import { gracefulShutdown } from 'node-schedule';
 import db_connection from '../DB/connection.js';
 import {globalResponse} from './middlewares/globalResponse.middleware.js';
 import {rollbackSavedDocuments} from './middlewares/rollback-saved-documents.middleware.js';
 import { rollbackUploadedFiles} from './middlewares/rollback-uploaded-files.middleware.js';
 
 import * as routers from './modules/index.routes.js';
+import { scheduleCronsForCouponCheck } from './utils/crons.js';
 
 /**
  * Initialize the E-commerce project.
@@ -53,6 +55,9 @@ export const intiateApp = (app, express) => {
 
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware
     app.use(globalResponse, rollbackSavedDocuments, rollbackUploadedFiles);
+
+    scheduleCronsForCouponCheck();
+    gracefulShutdown();
 
     // Set up a hello world route
     app.get('/', (req, res, next) => res.send('Hello world!'));
