@@ -2,11 +2,13 @@ import slugify from 'slugify';
 
 import Brand from '../../../DB/models/brand.model.js';
 import Product from '../../../DB/models/product.model.js';
+import ProductSocketIOTest from '../../../DB/models/product-socketIO-test.model.js';
 import {createDocumnetByCreate, findDocumentByFindById} from '../../../DB/dbMethods.js';
 import {systemRoles} from '../../utils/systemRoles.js';
 import cloudinaryConnection from '../../utils/cloudinary.js';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
 import {APIFeatures} from '../../utils/api-features.js';
+import { getIO } from '../../utils/io-generation.js';
 
 //================== Add product API ======================
 /**
@@ -212,4 +214,62 @@ export const getAllProductsAPI = async ( req, res, next) => {
 
     // 4- Return success response with the founded data
     res.status(200).json({ success: true, data: products});
+}
+
+/**
+ * Add product API endpoint using SocketIO 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the product is added.
+ */
+export const addProductUsingSocketIOTestAPI=async(req,res,next)=>{
+
+    console.log('addProductUsingSocketIOTestAPI endpoint logged');
+
+    // Destructuring the title, basePrice, and stock from the request body
+    const{title,basePrice,stock}=req.body;
+
+    // create a new product object
+    const product={title,basePrice,stock};
+
+    // Create the new product in the daqtabase using the create findtion
+    const newProduct=await createDocumnetByCreate(ProductSocketIOTest,product);
+
+    // Add the new product in the response's saveDpcoments object
+    res.saveDocuments={model:Product,_id:newProduct._id};
+
+    // Emit the new product event to all the connected clients with the new product
+    getIO().emit('new-product',newProduct);
+
+    // Return success json response with the new product
+    res.status(newProduct.status).json({success:newProduct.success,message:'Product created successfully',data:newProduct.createDocument})
+}
+/**
+ * Get all products API endpoint using SocketIO 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response with all products
+ */
+export const getAllProductUsingSocketIOTestAPI=async(req,res,next)=>{
+
+    // Setruct the page and she siae and the search from the request query
+    const {page,size,...search}=req.query;
+
+    // Create features for find and filters
+    const features=new APIFeatures(req.query,ProductSocketIOTest.find()).filters(search);
+
+    // Get all the products based on the filters
+    const products = await features.mongooseQuery;
+
+    // Emit the all products event to all the connected clients with the products
+    getIO().emit('all-products',products);
+
+    // Return success json response with the products
+    res.status(200).json({success:true,data:products})
 }

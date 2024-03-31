@@ -39,6 +39,7 @@ const list_of_files = [
     "src/utils/qr-code.js",
     "src/utils/pdf-kit.js",
     "src/utils/crons.js",
+    "src/utils/io-generation.js",
 
 
     // Services

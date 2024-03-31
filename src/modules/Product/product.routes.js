@@ -20,4 +20,8 @@ router.put('/update-product/:productId', validationMiddleware(updateProductSchem
 
 router.get('/get-all-products', expressAsyncHandler(productController.getAllProductsAPI));
 
+router.post('/add-product-socketIO-test',expressAsyncHandler(productController.addProductUsingSocketIOTestAPI));
+
+router.get('/get-all-products-socketIO-test', expressAsyncHandler(productController.getAllProductUsingSocketIOTestAPI));
+
 export default router;
