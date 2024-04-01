@@ -3,7 +3,7 @@ import expressAsyncHandler  from 'express-async-handler';
 
 import * as productController from './product.controller.js';
 import { endPointsRoles } from './product.endpoints.roles.js';
-import { addProductSchema, updateProductSchema } from './product.validationSchemas.js';
+import { addProductSchema, getProductWithReviewsSchema, updateProductSchema } from './product.validationSchemas.js';
 
 import {validationMiddleware} from '../../middlewares/validation.middleware.js'
 import { auth} from '../../middlewares/auth.middleware.js';
@@ -21,6 +21,8 @@ router.put('/update-product/:productId', validationMiddleware(updateProductSchem
 router.get('/get-all-products', expressAsyncHandler(productController.getAllProductsAPI));
 
 router.post('/add-product-socketIO-test',expressAsyncHandler(productController.addProductUsingSocketIOTestAPI));
+
+router.get('/get-product-with-reviews',validationMiddleware(getProductWithReviewsSchema),expressAsyncHandler(productController.getProductReviewsAPI));
 
 router.get('/get-all-products-socketIO-test', expressAsyncHandler(productController.getAllProductUsingSocketIOTestAPI));
 

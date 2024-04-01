@@ -50,7 +50,9 @@ const productSchema = new mongoose.Schema({
     brandId: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
 
 
-},{timestamps: true});
+},{timestamps: true,toJSON:{virtuals:true},toObject:{virtuals:true}});
+
+productSchema.virtual('Reviews',{ref:'Review',foreignField:'productId',localField:'_id'})
 
 
 /**

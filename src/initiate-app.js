@@ -59,6 +59,9 @@ export const intiateApp = (app, express) => {
     // Set up order routes
     app.use('/order',routers.orderRouter);
 
+    // Set up review routes 
+    app.use('/review',routers.reviewRouter);
+
     app.use('*',(req,res,next)=>{res.status(404).json({message:'Not Found'})})
 
     //  Apply global response middleware and rollback saved documents middleware and rollback uploaded files middleware

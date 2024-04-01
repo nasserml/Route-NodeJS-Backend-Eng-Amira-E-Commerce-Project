@@ -273,3 +273,24 @@ export const getAllProductUsingSocketIOTestAPI=async(req,res,next)=>{
     // Return success json response with the products
     res.status(200).json({success:true,data:products})
 }
+
+/**
+ * Get product bu id with its reviews API endpoint.
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res  - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the product with its reviews
+ */
+export const getProductReviewsAPI=async(req,res,next)=>{
+    
+    // Destructuring the productId from the request query
+    const {productId}=req.query;
+
+    // Find by id the prudct and populate the reviews virtual field with the reviews
+    const productWithReviews=await Product.findById(productId).populate([{path:'Reviews'}]);
+    
+    // Sendsuccessful json response with the product object with its Reviews
+    res.status(200).json({message:'Done', productWithReviews})
+}

@@ -10,3 +10,7 @@ export const addProductSchema = {
 export const updateProductSchema = {
     params: Joi.object({productId: generalRules.dbId}).required()
 }
+
+export const getProductWithReviewsSchema={
+    query:Joi.object({productId:generalRules.dbId.required()})
+}
