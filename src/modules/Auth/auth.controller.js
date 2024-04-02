@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+import generateUniqueString from '../../utils/generate-Unique-String.js';
 import User from '../../../DB/models/user.model.js';
 import sendEmailService from '../../services/send-email.service.js';
 import { createDocumnetByCreate, findDocumentByFindOne, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
@@ -152,4 +153,96 @@ export const signInAPI = async ( req, res, next) => {
     res.status(user.status).json({success: user.success, message: 'User logged in successfully', data: { token}});
 
 
+}
+
+/**
+ * Forget password API end point
+ * 
+ * @param {import('express').Request} req  - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response to the user check its email for reset password
+ * 
+ * @throws {Error} If invalid email
+ * @throws {Error} If email is not sent
+ */
+export const forgetPasswordAPI=async(req,res,next)=>{
+    
+    // Extract the email form the request body
+    const {email}=req.body;
+
+    // Find the user by the email in the database
+    const user=await findDocumentByFindOne(User,{email});
+
+    // If the user not found return an error
+    if(!user.success) return next(new Error('Invalid Email',{cause:400}));
+
+    // Generate a unique code for password reset
+    const code=generateUniqueString(6);
+
+    // Hash the generated code
+    const hashedCode=bcrypt.hashSync(code,+process.env.SALT_ROUNDS);
+
+    // Creae a jwt token containing the email and the ahshed code
+    const token=jwt.sign({payload:{email,sentCode:hashedCode}},process.env.RESET_TOKEN,{expiresIn:'1h'});
+
+    // Construct the reset password llink
+    const resetPasswordLink=`${req.protocol}://${req.headers.host}/auth/reset/${token}`;
+
+    // send the reset password link to the use
+    const isEmailSent=sendEmailService({to:email,subject:'Reset Password',message:`<h2>Please click on this link to reset your password</h2><a href=${resetPasswordLink}>Reset Password</a>}`})
+
+    // If the email not sent return an error
+    if(!isEmailSent) return next(new Error('Fail to sent the password email',{cause:400}));
+
+    // Update user forget code in the database
+    const userUpdates=await updateDocumentByFindOneAndUpdate(User,{email},{forgetCode:hashedCode},{new:true});
+
+    // Send a success response with message and the updated user information
+    res.status((200)).json({message:'Check your email to reset your password',userUpdates:userUpdates.updateDocument})
+}
+
+/**
+ * Reset password API end point
+ * 
+ * @param {import('express').Request} req  - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response thath password reset successfully
+ * 
+ * @throws {Error} If The user already reset the password
+ */
+export const resetPasswordAPI=async(req,res,next)=>{
+
+    // Extract the token from the request parameters
+    const {token}=req.params;
+
+    // Decode the token using the reset token
+    const decoded=jwt.verify(token,process.env.RESET_TOKEN);
+
+    // Find the user based on the email and the sent code
+    const user=await findDocumentByFindOne(User,{email:decoded?.email,forgetCode:decoded?.sentCode});
+
+    // If the user not found return an error
+    if(!user.success) return next(new Error('You are already reset your password, try to login',{cause:400}));
+
+    // Extract the new password from the request body
+    const {newPassword}=req.body;
+
+    // Hash the new password using the salt rounds
+    const hashedNewPassword=bcrypt.hashSync(newPassword,+process.env.SALT_ROUNDS);
+
+    // Update the user password in the database
+    user.isDocumentExists.password=hashedNewPassword;
+
+    // Remove the forget code in the database
+    user.isDocumentExists.forgetCode=null;
+
+    // Save the updated user data
+    const resetedPassData=await user.isDocumentExists.save();
+
+    // Send a success response with message and the updated user information
+    res.status(resetedPassData.status).json({message:'Password reset successfully',success:resetedPassData.success, resetedPassData:resetedPassData.isDocumentExists})
 }

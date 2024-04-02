@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { systemRoles } from '../../src/utils/systemRoles.js';
+import bcrypt from 'bcrypt';
 
 /**
  * Mongoose Schema definition for the user collection in the database
@@ -26,6 +27,9 @@ const userSchema = new mongoose.Schema({
     phoneNumbers: [{ type: String, required: true,}],
     addresses: [{ type: String, required: true}],
     role: { type: String, enum: Object.values(systemRoles), default: systemRoles.USER},
+    token: String,
+    forgetCode:String,
+    profilePicture:{secure_url:String,public_id:String},
     
     /** Boolean */
     isEmailVerified: { type: Boolean, default: false },
@@ -35,6 +39,13 @@ const userSchema = new mongoose.Schema({
     age: { type: Number, min: 18, max: 100},
     
 },{timestamps: true});
+
+// Hook to hash password before saving 
+// userSchema.pre('save',function(next,hash){
+
+//     this.password=bcrypt.hashSync(this.password,+process.env.SALT_ROUNDS);
+//     next();
+// })
 
 /**
  * Exports the user model to be used 

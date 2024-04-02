@@ -22,3 +22,12 @@ export const loginSchema = {
         password: Joi.string().required().messages({'any.required': 'Password is required'})
     })
 };
+
+export const forgetPasswordSchema={
+    body:Joi.object({email:Joi.string().email().required()})
+}
+
+export const resetPasswordSchema={
+    body:Joi.object({newPassword:Joi.string().required()}),
+    params:Joi.object({token:Joi.string().required()})
+}
