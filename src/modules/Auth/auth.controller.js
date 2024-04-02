@@ -146,6 +146,9 @@ export const signInAPI = async ( req, res, next) => {
     // update isLoggedIn = true in the database
     user.isDocumentExists.isLoggedIn = true;
     
+    // Update the user document with the new login token 
+    user.isDocumentExists.token=token;
+
     // Save the updated user document
     await user.isDocumentExists.save();
 

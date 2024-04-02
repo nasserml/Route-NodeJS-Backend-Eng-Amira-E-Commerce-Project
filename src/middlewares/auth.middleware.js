@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../../DB/models/user.model.js';
-import { findDocumentByFindById } from '../../DB/dbMethods.js';
+import { findDocumentByFindById, findDocumentByFindOne } from '../../DB/dbMethods.js';
 
 
 /**
@@ -31,25 +31,52 @@ export const auth = (accessRoles) => {
             // // Extract the token without the prefix
             // const token = accesstoken.split(process.env.TOKEN_PREFIX)[1];
             
-            // Verify the tokewn and decode its payload
-            const decodedData =  jwt.verify(accesstoken, process.env.JWT_SECRET_LOGIN);
+            try {
 
-            // Check if the token payload is valid.
-            if(!decodedData || !decodedData.id) return next(new Error('Invalid token payload', {cause:400})) // If token payload is invalid, return an error
+                // Verify the tokewn and decode its payload
+                const decodedData =  jwt.verify(accesstoken, process.env.JWT_SECRET_LOGIN);
 
-            // Check if the user exists in the database 
-            const findUser = await findDocumentByFindById(User,decodedData.id, 'username email role');
-            if(!findUser.success) return next(new Error('Please signUp first', {cause:404})); // If user does not exist, return an error
+                // Check if the token payload is valid.
+                if(!decodedData || !decodedData.id) return next(new Error('Invalid token payload', {cause:400})) // If token payload is invalid, return an error
 
-            
-            // Check if the user role is allowed (authorization check)
-            if(!accessRoles.includes(findUser.isDocumentExists.role)) return next(new Error('You are not allowed to access this route',{cause:401}));
-            
-            // Set the authenticated user in the request object
-            req.authUser = findUser.isDocumentExists;
-            
-            // Call the next middleware
-            next();
+                // Check if the user exists in the database 
+                const findUser = await findDocumentByFindById(User,decodedData.id, 'username email role');
+                if(!findUser.success) return next(new Error('Please signUp first', {cause:404})); // If user does not exist, return an error
+
+                
+                // Check if the user role is allowed (authorization check)
+                if(!accessRoles.includes(findUser.isDocumentExists.role)) return next(new Error('You are not allowed to access this route',{cause:401}));
+                
+                // Set the authenticated user in the request object
+                req.authUser = findUser.isDocumentExists;
+                
+                // Call the next middleware
+                next();
+            } catch (error) {
+                
+                // Refresh token 
+                // Check if the token expired or not
+                if(error=='TokenExpiredError: jwt expired'){
+                    
+                    // Find the user in the database using the access token 
+                    const findUser=await findDocumentByFindOne(User,{token:accesstoken});
+
+                    // If the user is not found, return an error
+                    if(!findUser.success) return next(new Error('Wrong token',{cause:400}));
+
+                    // Generate a new access token and refresh token
+                    const token = jwt.sign({ email: findUser.isDocumentExists.email, id: findUser.isDocumentExists._id, loggedIn: true}, process.env.JWT_SECRET_LOGIN, {expiresIn: '1d'})
+                    
+                    // Update the refresh token in the database
+                    findUser.isDocumentExists.token=token;
+
+                    // Save the updated user in the database
+                    await findUser.isDocumentExists.save();
+
+                    // Return the new  refresh token
+                    res.status(findUser.status).json({message:'refreshed token',token})
+                }
+            }
 
         } catch (error) {
             // If any error occurs, return a generic error message
