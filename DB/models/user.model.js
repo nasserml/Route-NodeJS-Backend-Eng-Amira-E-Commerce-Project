@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
     token: String,
     forgetCode:String,
     profilePicture:{secure_url:String,public_id:String},
+    provider:{type:String,default:'System',enum:['System','GOOGLE']},
     
     /** Boolean */
     isEmailVerified: { type: Boolean, default: false },

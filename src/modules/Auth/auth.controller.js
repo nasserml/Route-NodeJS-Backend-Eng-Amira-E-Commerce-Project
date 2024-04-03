@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import {OAuth2Client} from 'google-auth-library';
 
 import generateUniqueString from '../../utils/generate-Unique-String.js';
 import User from '../../../DB/models/user.model.js';
@@ -248,4 +249,151 @@ export const resetPasswordAPI=async(req,res,next)=>{
 
     // Send a success response with message and the updated user information
     res.status(resetedPassData.status).json({message:'Password reset successfully',success:resetedPassData.success, resetedPassData:resetedPassData.isDocumentExists})
+}
+
+/**
+ * Login a user via Gmail authenticaion, verfies the user's email, generate a login token, and update the user's Information in the database API end point.
+ * 
+ * @param {import('express').Request} req - Express request object containing the user's idToken in the body 
+ * @param {import('express').Response} res - Express response object to send back a success or error message
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the user is logged in successfully
+ * 
+ * @throws {Error} If the user's email is not verfied
+ * @throws {Error} If the user is not found in the database invalid login credentials
+ */
+export const loginWithGmailAPI=async(req,res,next)=>{
+
+    // Extract the idToken from the request body
+    const {idToken}=req.body;
+
+    // Create a new OAuth2Client
+    const client = new OAuth2Client();
+
+    // Function to verfiy the idToken
+    /**
+     * Verfit the id token using the client and return the payload.
+     * @returns {object} The pay load extracted from the verfied id token
+     */
+    async function verify() {
+
+        // Verfiy the id token using the client
+        const ticket = await client.verifyIdToken({idToken ,audience:process.env.CLIENT_ID,  
+            // Specify the CLIENT_ID of the app that accesses the backend
+            // Or, if multiple clients access the backend:
+            //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        });
+
+        // Get the payload from the verfied id token
+        const payload = ticket.getPayload();
+        
+        // If request specified a G Suite domain:
+        // const domain = payload['hd'];
+
+        // Return the payload
+        return payload;
+    }
+
+    // Call the verfiy function and catch any errors
+    const result=await verify().catch(console.error);
+
+    // Check if the email is verfied if not return an error
+    if(result.email_verified !== true) return next(new Error('Email is not verfied, please enter another email', {cause:400}));
+
+    
+    // get user by email and check if isEmailVerfied = true
+    const user = await findDocumentByFindOne(User, {email:result.email, provider:'GOOGLE'});
+
+    // Check if the user is found otherwise return an error
+    if (!user.success) return next(new Error('Invalid login credentials', { cause: 404}))
+
+
+    // Generate login token with user email and user id and loggedIn = true
+    const token = jwt.sign({ email:result.email, id: user.isDocumentExists._id, loggedIn: true}, process.env.JWT_SECRET_LOGIN, {expiresIn: '1d'});
+
+    // update isLoggedIn = true in the database
+    user.isDocumentExists.isLoggedIn = true;
+    
+    // Update the user document with the new login token 
+    user.isDocumentExists.token=token;
+
+    // Save the updated user document
+    await user.isDocumentExists.save();
+
+    // Send success response that the user is logged in successfully
+    res.status(200).json({success:true,message:'User logged in successfully',data:{token}})
+}
+
+/**
+ * Sign up user using gmail API endpoint.
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Returns success response that the user is signed up successfully
+ * 
+ * @throws {Error} If the user's email is not verfied
+ * @throws {Error} If the user's email is already exists
+ * @throws {Error} If the user is not created in the database
+ */
+export const signUpWithGmailAPI=async(req,res,next)=>{
+
+    // Extract the idToken from the request body
+    const {idToken}=req.body;
+
+    // Create a new OAuth2Client
+    const client = new OAuth2Client();
+
+    // Function to verfiy the idToken
+    /**
+     * Verfit the id token using the client and return the payload.
+     * @returns {object} The pay load extracted from the verfied id token
+     */
+    async function verify() {
+
+        // Verfiy the id token using the client
+        const ticket = await client.verifyIdToken({idToken ,audience:process.env.CLIENT_ID,  
+            // Specify the CLIENT_ID of the app that accesses the backend
+            // Or, if multiple clients access the backend:
+            //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        });
+
+        // Get the payload from the verfied id token
+        const payload = ticket.getPayload();
+        
+        // If request specified a G Suite domain:
+        // const domain = payload['hd'];
+
+        // Return the payload
+        return payload;
+    }
+
+    // Call the verfiy function and catch any errors
+    const result=await verify().catch(console.error);
+
+    // Check if the email is verfied if not return an error
+    if(result.email_verified !== true) return next(new Error('Email is not verfied, please enter another email', {cause:400}));
+
+     // check if the user already exists in the database using the email
+     const isEmailDuplicated = await findDocumentByFindOne(User, {email:result.email});
+
+     // If the user already exists in the database returning an error
+     if (isEmailDuplicated.success) return next(new Error('Email already exists, Please try another email', {cause: 409}));
+
+     // Generate random password
+     const randomPassword=Math.random().toString(36).slice(-8);
+     
+     // Random password hashing 
+     const hashedPassword = bcrypt.hashSync(randomPassword, +process.env.SALT_ROUNDS);
+
+     // create new document in the database
+     const newUser = await createDocumnetByCreate(User, {username:result.name, email:result.email, password: hashedPassword,isEmailVerified:true,provider:'GOOGLE'});
+
+     // Check if the user is created in the database otherwise return an error
+     if (!newUser.success) return next(new Error('User not created', {cause: 500}));
+
+     // Return the response that the user is created successfully with the new user data
+     res.status(newUser.status).json({success: newUser.success, message: 'User created successfully, please login and complete your profile', data: newUser});
 }

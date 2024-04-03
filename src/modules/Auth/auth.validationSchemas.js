@@ -31,3 +31,11 @@ export const resetPasswordSchema={
     body:Joi.object({newPassword:Joi.string().required()}),
     params:Joi.object({token:Joi.string().required()})
 }
+
+export const loginWithGmailSchema={
+    body:Joi.object({idToken:Joi.string().required()})
+}
+
+export const signUpWithGmailSchema={
+    body:Joi.object({idToken:Joi.string().required()})
+}
