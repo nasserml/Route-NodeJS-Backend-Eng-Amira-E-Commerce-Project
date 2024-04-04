@@ -58,7 +58,12 @@ const list_of_files = [
     "Files/pdf-invoice-test.pdf",
     
     // Index
-    "index.js"
+    "index.js",
+
+    //Dockerfile
+    "Dockerfile",
+    "docker-compose.yaml",
+    ".dockerignore"
 ];
 
 /**

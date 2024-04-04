@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  nodejs:
+    image: img-v1-nodejs
+    container_name: ecomm-container-1
+    build: .
+    ports:
+      - "3300:3000"
+    environment:
+      - CONNECTION_URL_HOST=mongodb+srv://nasser:nasser123@cluster0.eiq9qc0.mongodb.net/e-commerce-prod
+  
+  mongodb:
+    image: mongodb-img
+    container_name: mongodb-container
+    ports: 
+      - "27017:27017"
+    volumes: 
+      - mongodb-data:/data/db
+
+volumes:
+  mongodb-data:
+    driver: local
+
+
+# run this command => docker-compose up
+# http://localhost:3300 => hello world
+# http://localhost:3000/product/get-all-products => hello world
