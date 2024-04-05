@@ -106,8 +106,16 @@ const getListOfFiles = (entities) => {
         let routesEntity = `src/modules/${capitalizeFirstLetter(entityName)}/${entityName}.routes.js`;
         let validationSchemasEntity = `src/modules/${capitalizeFirstLetter(entityName)}/${entityName}.validationSchemas.js`;
         
+
+         // GraphQL 
+         let schemaEntity=`src/modules/${capitalizeFirstLetter(entityName)}/graphQL/${entityName}.schema.js`;
+         let typesEntity=`src/modules/${capitalizeFirstLetter(entityName)}/graphQL/${entityName}.types.js`;
+         let fieldsEntity=`src/modules/${capitalizeFirstLetter(entityName)}/graphQL/${entityName}.fields.js`;
+         let resolveEntity=`src/modules/${capitalizeFirstLetter(entityName)}/graphQL/${entityName}.resolve.js`;
+         let argsEntity=`src/modules/${capitalizeFirstLetter(entityName)}/graphQL/${entityName}.args.js`;
+
         // Add the generated file paths to the global list_of_files array
-        list_of_files.push(modelEntity,endPointsRolesEntity,controllerEntity,routesEntity,validationSchemasEntity);
+        list_of_files.push(modelEntity,endPointsRolesEntity,controllerEntity,routesEntity,validationSchemasEntity,schemaEntity,typesEntity,fieldsEntity,resolveEntity,argsEntity);
     });
     
 }
