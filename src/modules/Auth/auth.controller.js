@@ -5,7 +5,7 @@ import {OAuth2Client} from 'google-auth-library';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
 import User from '../../../DB/models/user.model.js';
 import sendEmailService from '../../services/send-email.service.js';
-import { createDocumnetByCreate, findDocumentByFindOne, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, findDocumentByFindOne, updateDocumentByFinByIdAndUpdate, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
 
 // ========================== SignUp APi ====================
 
@@ -396,4 +396,31 @@ export const signUpWithGmailAPI=async(req,res,next)=>{
 
      // Return the response that the user is created successfully with the new user data
      res.status(newUser.status).json({success: newUser.success, message: 'User created successfully, please login and complete your profile', data: newUser});
+}
+
+
+/**
+ * Soft delete user API endpoint.
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Success response that the user is fot deleted successfully
+ * 
+ * @throws {Error} - If the user doesnot exists in the database
+ */
+export const softDeleteUserAPI=async(req,res,next)=>{
+    
+    // Destructuring the id of the user from auth user
+    const{_id}=req.authUser;
+
+    // Update the user by find by id and update to set the isSoftDeleted to true with isLogggedIn to false 
+    const user=await updateDocumentByFinByIdAndUpdate(User,_id,{isSoftDeleted:true,isLoggedIn:false},{new:true});
+    
+    // If the user is not updated return an error
+    if(!user.success) return next(new Error('Invalid user', {cause: 500}));
+
+    // Send success response that the user is soft deleted successfully 
+    res.status(user.status).json({message:'User soft deleted successfully',success:user.success,data:user.updateDocument});
 }

@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema({
     /** Boolean */
     isEmailVerified: { type: Boolean, default: false },
     isLoggedIn: { type: Boolean, default: false},
+    isSoftDeleted:{type: Boolean,default:false},
 
     /** Number */
     age: { type: Number, min: 18, max: 100},
