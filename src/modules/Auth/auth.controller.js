@@ -5,7 +5,7 @@ import {OAuth2Client} from 'google-auth-library';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
 import User from '../../../DB/models/user.model.js';
 import sendEmailService from '../../services/send-email.service.js';
-import { createDocumnetByCreate, findDocumentByFindOne, updateDocumentByFinByIdAndUpdate, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, findDocumentByFindById, findDocumentByFindOne, updateDocumentByFinByIdAndUpdate, updateDocumentByFindOneAndUpdate } from '../../../DB/dbMethods.js';
 
 // ========================== SignUp APi ====================
 
@@ -423,4 +423,59 @@ export const softDeleteUserAPI=async(req,res,next)=>{
 
     // Send success response that the user is soft deleted successfully 
     res.status(user.status).json({message:'User soft deleted successfully',success:user.success,data:user.updateDocument});
+}
+
+/**
+ * Update the user password API endpoint
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Success response that the user password is updated successfully
+ * 
+ * @throws {Error} - If the new password is the same as the old password.
+ * @throws {Error} - If the user not found in the datanase
+ * @throws {Error} - If the user old password does not match the user password
+ * @throws {Error} - If the user not saved successfully in the database
+ */
+export const updatePasswordAPI=async(req,res,next)=>{
+
+    // Get the user id from the request authuser
+    const {_id}=req.authUser;
+
+    // Destructure the new passwotd and the old password from the request body
+    const {newPassword,oldPassword}=req.body;
+
+    // If the new password equals the old password return an error 
+    if(newPassword==oldPassword) return next(new Error('The new password should be different from the old password',{cause:400}));
+
+    // Find the user in the database by fimd by one  and isLoggedin is true
+    const user=await findDocumentByFindOne(User,{_id,isLoggedIn:true});
+
+    // If the user does not exits in the database returb ab error
+    if(!user.success) return next(new Error('Invalid user',{cause:500}));
+
+    // Check if the old passworrd match the current user password
+    const isPasswordMatched=bcrypt.compareSync(oldPassword,user.isDocumentExists.password);
+
+    // If it is not matched return an error
+    if(!isPasswordMatched) return next(new Error('Invalid old password',{cause:404}));
+
+    // Hash the nepassword using salt rounds
+    const hashNewPassword=bcrypt.hashSync(newPassword,+process.env.SALT_ROUNDS);
+
+    // Set the user current password to the new hashed passowrd
+    user.isDocumentExists.password=hashNewPassword;
+
+    // Set the isLoggedIn ito dfalse for the current user
+    user.isDocumentExists.isLoggedIn=false;
+
+    // Save the updated data of the user in the datbase with the new password 
+    await user.isDocumentExists.save();
+
+    // Send a successful response to the user that the password is updated successfully
+    res.status(user.status).json({message:'Password updated successfully login with the new password', user:user.isDocumentExists});
+
 }

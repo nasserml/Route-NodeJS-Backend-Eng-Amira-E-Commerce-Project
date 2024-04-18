@@ -39,3 +39,7 @@ export const loginWithGmailSchema={
 export const signUpWithGmailSchema={
     body:Joi.object({idToken:Joi.string().required()})
 }
+
+export const updatePasswordSchema={
+    body:Joi.object({oldPassword:Joi.string().required(),newPassword:Joi.string().required()})
+}
