@@ -192,10 +192,10 @@ export const forgetPasswordAPI=async(req,res,next)=>{
     const token=jwt.sign({payload:{email,sentCode:hashedCode}},process.env.RESET_TOKEN,{expiresIn:'1h'});
 
     // Construct the reset password llink
-    const resetPasswordLink=`${req.protocol}://${req.headers.host}/auth/reset/${token}`;
+    const resetPasswordLink=`${req.protocol}://${req.headers.host}/auth/reset-password/${token}`;
 
     // send the reset password link to the use
-    const isEmailSent=sendEmailService({to:email,subject:'Reset Password',message:`<h2>Please click on this link to reset your password</h2><a href=${resetPasswordLink}>Reset Password</a>}`})
+    const isEmailSent=sendEmailService({to:email,subject:'Reset Password',message:`<h2>Please click on this link to reset your password</h2><a href=${resetPasswordLink}>Reset Password</a>`})
 
     // If the email not sent return an error
     if(!isEmailSent) return next(new Error('Fail to sent the password email',{cause:400}));
@@ -227,7 +227,7 @@ export const resetPasswordAPI=async(req,res,next)=>{
     const decoded=jwt.verify(token,process.env.RESET_TOKEN);
 
     // Find the user based on the email and the sent code
-    const user=await findDocumentByFindOne(User,{email:decoded?.email,forgetCode:decoded?.sentCode});
+    const user=await findDocumentByFindOne(User,{email:decoded?.payload.email,forgetCode:decoded?.payload.sentCode});
 
     // If the user not found return an error
     if(!user.success) return next(new Error('You are already reset your password, try to login',{cause:400}));
@@ -248,7 +248,7 @@ export const resetPasswordAPI=async(req,res,next)=>{
     const resetedPassData=await user.isDocumentExists.save();
 
     // Send a success response with message and the updated user information
-    res.status(resetedPassData.status).json({message:'Password reset successfully',success:resetedPassData.success, resetedPassData:resetedPassData.isDocumentExists})
+    res.status(user.status).json({message:'Password reset successfully',success:user.success, resetedPassData:resetedPassData})
 }
 
 /**
