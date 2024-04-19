@@ -6,6 +6,7 @@ import generateUniqueString from '../../utils/generate-Unique-String.js';
 import cloudinaryConnection from '../../utils/cloudinary.js';
 import slugify from 'slugify';
 import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne } from '../../../DB/dbMethods.js';
+import { APIFeatures } from '../../utils/api-features.js';
 
 // ================= Add Subcategory API =================
 /**
@@ -238,4 +239,29 @@ export const getAllSubcategoriesWithBrandsAPI = async (req, res, next) => {
     res.status(200).json({success: true, message:'Subcategories with brands fetched successfully',data: subcategories});
 
 
+}
+
+/**
+ * Get all subcategoruies using API features class to filter the result API endpoint
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Success response wioth the fetchewd filtere subcategories 
+ */
+export const getAllSubcategoriesAPIFeaturesAPI=async(req,res,next)=>{
+
+    // Extract  the page and size and sort and rest seearch from the request query
+    const {page,size,sort,...search}=req.query;
+
+    // Applying Api Features on the subcategorie model to use filter 
+    const features=new APIFeatures(req.query,SubCategory.find()).filters(search);
+
+    // Execute the monosoose query on the data base 
+    const subCategories=await features.mongooseQuery;
+
+    // send success response with the fetched subcatefgories
+    res.status(200).json({message:'Subcategories fetched successfully',subCategories})
 }

@@ -18,4 +18,6 @@ router.delete('/delete-sub-category/:subCategoryId', validationMiddleware(delete
 
 router.get('/get-all-sub-categories-with-brands', expressAsyncHandler(subCategoryController.getAllSubcategoriesWithBrandsAPI));
 
+router.get('/get-all-subcategories-api-features',expressAsyncHandler(subCategoryController.getAllSubcategoriesAPIFeaturesAPI));
+
 export default router;
