@@ -213,3 +213,25 @@ export const deleteCategoryAPI = async (req, res, next) => {
     // 10- Send successfully response indicating that the category was deleted successfully
     res.status(200).json({success: true, message: 'Category deleted successfully'});
 }
+
+/**
+ * Get the category with its subcategories using category id API endpoint
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Success response with the specified category with its subcategories
+ */
+export const getAllSubcategoriesForSpecificCategoryAPI=async(req,res,next)=>{
+
+    // Extract the category id from the request parameters
+    const {categoryId}=req.params;
+
+    // Get the categort with its subcategories using find by id and populate the subcategories field
+    const caretegoryWithSubCategories=await Category.findById(categoryId).populate([{path:'subcategories'}]);
+
+    // Send success response with the category with its subcategories
+    res.status(200).json({message:'Subcategories for specififc category fetched successfully',data:caretegoryWithSubCategories});
+}

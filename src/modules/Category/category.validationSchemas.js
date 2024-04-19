@@ -19,3 +19,7 @@ export const updateCategorySchema = {
 export const deleteCategorySchema = {
     params: Joi.object({categoryId: generalRules.dbId})
 }
+
+export const getAllSubCategoriesForCategorySchema={
+    params:Joi.object({categoryId:generalRules.dbId.required()})
+}

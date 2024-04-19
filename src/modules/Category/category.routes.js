@@ -8,7 +8,7 @@ import { endPointsRoles } from './category.endpoints.roles.js';
 import {auth} from '../../middlewares/auth.middleware.js';
 import { allowedExtensions } from '../../utils/allowedExtensions.js';
 import { validationMiddleware } from '../../middlewares/validation.middleware.js';
-import { addCategorySchema, deleteCategorySchema, updateCategorySchema } from './category.validationSchemas.js';
+import { addCategorySchema, deleteCategorySchema, getAllSubCategoriesForCategorySchema, updateCategorySchema } from './category.validationSchemas.js';
 import categorySchema from './graphQL/category.schema.js';
 
 const router = Router();
@@ -21,8 +21,9 @@ router.put('/update-category/:categoryId', validationMiddleware(updateCategorySc
 
 router.get('/get-all-categories', expressAsyncHandler(categoryController.getAllCategoriesAPI));
 
-router.delete('/delete-category/:categoryId', validationMiddleware(deleteCategorySchema),auth(endPointsRoles.DELETE_CATEGORY), expressAsyncHandler(categoryController.deleteCategoryAPI))
+router.delete('/delete-category/:categoryId', validationMiddleware(deleteCategorySchema),auth(endPointsRoles.DELETE_CATEGORY), expressAsyncHandler(categoryController.deleteCategoryAPI));
 
+router.get('/get-all-sub-categories-for-category/:categoryId',validationMiddleware(getAllSubCategoriesForCategorySchema),expressAsyncHandler(categoryController.getAllSubcategoriesForSpecificCategoryAPI));
 export default router;
 
 
