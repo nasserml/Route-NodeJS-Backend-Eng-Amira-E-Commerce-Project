@@ -5,6 +5,7 @@ import SubCategory from '../../../DB/models/sub-category.model.js';
 import Brand from '../../../DB/models/brand.model.js';
 import cloudinaryConnection from '../../utils/cloudinary.js';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
+import { APIFeatures } from '../../utils/api-features.js';
 import { createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne} from '../../../DB/dbMethods.js';
 // ==================== Add Category API ==============
 /**
@@ -161,7 +162,16 @@ export const updateCategoryAPI = async (req, res, next) => {
 export const getAllCategoriesAPI = async (req, res, next) => {
 
     // Nested populate to get all categories in the database and populate subCategories field with subcategories, and Brand for each subCategory
-    const categories = await Category.find().populate([{path: 'subcategories', populate:[{path: 'Brands'}]}]);
+    // const categories = await Category.find().populate([{path: 'subcategories', populate:[{path: 'Brands'}]}]);
+
+    // Extract the page and size  and sort nd search from request parameters
+    const {page,size,sort, ...search}=req.query;
+
+    // Filters the cateogry using the search anAPIFeature class
+    const features=new APIFeatures(req.query,Category.find()).filters(search);
+
+    // Execute the mongooseQuery on the database
+    const categories=await features.mongooseQuery;
 
     // Send successful response with status 200 and send a JSON response with a success messga e with categories
     res.status(200).json({ success: true, message: 'Categories fetched successfully', data: categories});
