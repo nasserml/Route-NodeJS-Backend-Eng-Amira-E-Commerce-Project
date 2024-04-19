@@ -7,7 +7,7 @@ import { multerMiddleHost} from '../../middlewares/multer.middleware.js';
 import { endPointsRoles } from './sub-category.endpoints.roles.js';
 import {auth} from '../../middlewares/auth.middleware.js';
 import { allowedExtensions } from '../../utils/allowedExtensions.js';
-import { addSubCategorySchema, updateSubCategorySchema, deleteSubCategorySchema } from './sub-category.validationSchemas.js';
+import { addSubCategorySchema, updateSubCategorySchema, deleteSubCategorySchema, getSubCategoryByIdSchema } from './sub-category.validationSchemas.js';
 const router = Router();
 
 router.post('/add-sub-category/:categoryId', validationMiddleware(addSubCategorySchema),auth(endPointsRoles.ADD_SUB_CATEGORY), multerMiddleHost({extensions: allowedExtensions.image}).single('image'), expressAsyncHandler(subCategoryController.addSubCategoryAPI));
@@ -19,5 +19,7 @@ router.delete('/delete-sub-category/:subCategoryId', validationMiddleware(delete
 router.get('/get-all-sub-categories-with-brands', expressAsyncHandler(subCategoryController.getAllSubcategoriesWithBrandsAPI));
 
 router.get('/get-all-subcategories-api-features',expressAsyncHandler(subCategoryController.getAllSubcategoriesAPIFeaturesAPI));
+
+router.get('/get-subcategory-by-id/:subCategoryId',validationMiddleware(getSubCategoryByIdSchema),expressAsyncHandler(subCategoryController.getSubCategoryByIdAPI));
 
 export default router;

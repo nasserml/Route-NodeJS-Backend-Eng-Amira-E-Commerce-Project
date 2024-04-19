@@ -265,3 +265,29 @@ export const getAllSubcategoriesAPIFeaturesAPI=async(req,res,next)=>{
     // send success response with the fetched subcatefgories
     res.status(200).json({message:'Subcategories fetched successfully',subCategories})
 }
+
+/**
+ * Get subcategory by id  API endpoint 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response} JSON response - Success response that the specified subcategory fetched successfully by its id
+ * 
+ * @throws {Error} If the subcategory doesnot exists in the database
+ */
+export const getSubCategoryByIdAPI=async(req,res,next)=>{
+
+    // Extract the subcategory id from the request parameters
+    const {subCategoryId}=req.params;
+
+    // Get the subcategory from the database using the find by id method
+    const subCategory=await findDocumentByFindById(SubCategory,subCategoryId);
+
+    // If the subcategory doesnot exist return an error
+    if(!subCategory.success) return next({message:'Subcategory not found',cause:404});
+
+    // Send success response =that the subcategory fetched successfully with its data
+    res.status(subCategory.status).json({message:'subcategory fetched successfully', subCategory:subCategory.isDocumentExists});
+}
