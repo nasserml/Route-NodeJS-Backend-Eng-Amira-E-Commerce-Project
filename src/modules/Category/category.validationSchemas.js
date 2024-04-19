@@ -23,3 +23,7 @@ export const deleteCategorySchema = {
 export const getAllSubCategoriesForCategorySchema={
     params:Joi.object({categoryId:generalRules.dbId.required()})
 }
+
+export const getCategoryByIdScema={
+    params:Joi.object({categoryId:generalRules.dbId.required()})
+}
