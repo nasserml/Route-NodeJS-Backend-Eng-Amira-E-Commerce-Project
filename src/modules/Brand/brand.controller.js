@@ -251,3 +251,29 @@ export const getAllBrandsAPI = async (req, res, next) => {
     // 2- Return the success response that the brands with products are fetched successfully
     res.status(200).json({success: true, message: 'Brands with products fetched successfully',data: brands})
 }
+/**
+ * Get all brands fro specific subcategory API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next function.
+ * 
+ * @returns {import('express').Response} JSON response - Send a success reponse with the brands of the subcategory
+ * 
+ * @throws {Error} - If the brands not found
+ */
+export const getAllBrandsForSubCategoryAPI=async(req,res,next)=>{
+
+    // Extract th e subcategor y id from the requets params
+    const {subCategoryId}=req.params;
+
+    // find the documents in brand collection in the database wsing find by one method using subcategory id
+    const barndsSubcategory=await findDocumentByFindOne(Brand,{subCategoryId});
+
+    // If the re is no brands found return an error 
+    if(!barndsSubcategory.success) return next({message:'Brands not found',cause:404});
+
+    // Send success reponse to the user with brands of the subcategories 
+    res.status(barndsSubcategory.status).json({message:'Brands for the subcategory fetched successfully',data:barndsSubcategory.isDocumentExists})
+
+}

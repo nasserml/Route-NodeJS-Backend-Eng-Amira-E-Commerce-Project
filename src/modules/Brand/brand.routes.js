@@ -3,7 +3,7 @@ import expressAsyncHandler from 'express-async-handler';
 
 import * as brandController from './brand.controller.js';
 import {endPointsRoles} from './brand.endpoints.roles.js';
-import { addBrandSchema, deleteBrandSchema, updateBrandSchema } from './brand.validationSchemas.js';
+import { addBrandSchema, deleteBrandSchema, getAllBrandsForSubcategorySchema, updateBrandSchema } from './brand.validationSchemas.js';
 
 
 import { multerMiddleHost} from '../../middlewares/multer.middleware.js';
@@ -22,6 +22,6 @@ router.put('/update-brand/:brandId', validationMiddleware(updateBrandSchema), au
 
 router.get('/get-all-brands', expressAsyncHandler(brandController.getAllBrandsAPI));
 
-
+router.get('/get-all-brands-for-subcategory/:subCategoryId',validationMiddleware(getAllBrandsForSubcategorySchema),expressAsyncHandler(brandController.getAllBrandsForSubCategoryAPI));
 
 export default router;

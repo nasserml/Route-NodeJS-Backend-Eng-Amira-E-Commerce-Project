@@ -16,3 +16,7 @@ export const deleteBrandSchema = {
 export const updateBrandSchema = {
     params : Joi.object({brandId: generalRules.dbId}).required()
 }
+
+export const getAllBrandsForSubcategorySchema={
+    params:Joi.object({subCategoryId:generalRules.dbId.required()})
+}
