@@ -20,3 +20,7 @@ export const updateBrandSchema = {
 export const getAllBrandsForSubcategorySchema={
     params:Joi.object({subCategoryId:generalRules.dbId.required()})
 }
+
+export const getAllBrandsForCategorySchema={
+    params:Joi.object({categoryId:generalRules.dbId.required()})
+}

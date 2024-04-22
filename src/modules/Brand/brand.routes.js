@@ -3,7 +3,7 @@ import expressAsyncHandler from 'express-async-handler';
 
 import * as brandController from './brand.controller.js';
 import {endPointsRoles} from './brand.endpoints.roles.js';
-import { addBrandSchema, deleteBrandSchema, getAllBrandsForSubcategorySchema, updateBrandSchema } from './brand.validationSchemas.js';
+import { addBrandSchema, deleteBrandSchema, getAllBrandsForCategorySchema, getAllBrandsForSubcategorySchema, updateBrandSchema } from './brand.validationSchemas.js';
 
 
 import { multerMiddleHost} from '../../middlewares/multer.middleware.js';
@@ -24,4 +24,7 @@ router.get('/get-all-brands', expressAsyncHandler(brandController.getAllBrandsAP
 
 router.get('/get-all-brands-for-subcategory/:subCategoryId',validationMiddleware(getAllBrandsForSubcategorySchema),expressAsyncHandler(brandController.getAllBrandsForSubCategoryAPI));
 
+router.get('/get-all-brands-for-category/:categoryId',validationMiddleware(getAllBrandsForCategorySchema),expressAsyncHandler(brandController.getAllBrandsForCategoryAPI))
+
+router.get('/get-all-brands-api-features',expressAsyncHandler(brandController.getBrandsUsingAPIFeaturesAPI))
 export default router;

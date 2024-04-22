@@ -5,6 +5,7 @@ import SubCategory from '../../../DB/models/sub-category.model.js';
 import cloudinaryConnection from '../../utils/cloudinary.js';
 import generateUniqueString from '../../utils/generate-Unique-String.js';
 import {createDocumnetByCreate, deleteDocumentByFindByIdAndDelete, findDocumentByFindById, findDocumentByFindOne} from '../../../DB/dbMethods.js';
+import { APIFeatures } from '../../utils/api-features.js';
 // ================ Add Brand API =======================
 /**
  * Add Brand API endpoint to the data base and save image to the cloudinary
@@ -275,5 +276,55 @@ export const getAllBrandsForSubCategoryAPI=async(req,res,next)=>{
 
     // Send success reponse to the user with brands of the subcategories 
     res.status(barndsSubcategory.status).json({message:'Brands for the subcategory fetched successfully',data:barndsSubcategory.isDocumentExists})
+}
+
+/**
+ * Get all brands for category based on it id API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next function.
+ * 
+ * @returns {import('express').Response} JSON response -Send success reponse with the brands of the category
+ * 
+ * @throws {Error} If there is no brnds found
+ */
+export const getAllBrandsForCategoryAPI=async(req,res,next)=>{
+
+    // Extract the category id from the request params
+    const {categoryId}=req.params;
+
+    // Find the brands of the categorybased on its id using the find by one method from the brand collection in the database
+    const brandsCategory=await findDocumentByFindOne(Brand,{categoryId});
+
+    // If there i no brands found return an error 
+    if(!brandsCategory.success) return next({message:'Brand not found',cause:404});
+
+    // Send success response that brnds fetched successfully with the data
+    res.status(brandsCategory.status).json({message:'Brands for the category fetched successfully',success:brandsCategory.success,data:brandsCategory.isDocumentExists});
+}
+
+/**
+ * Get brands usin API featruere API endpount
+ * 
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next function.
+ * 
+ * @returns {import('express').Response} JSON response -Send success reponse with the brands after applying api feature 
+ */
+export const getBrandsUsingAPIFeaturesAPI=async(req,res,next)=>{
+
+    // Destructure the page and the size and the sort and the rest search parameters from request  query
+    const {page,size,sort,...search}=req.query;
+    
+    // Create new object of the class api feature wign the request query and brnad find method and then apply filters using search
+    const features=new APIFeatures(req.query,Brand.find()).filters(search);
+    
+    // Execute the query mongoose with the specified filters
+    const brands=await features.mongooseQuery;
+
+    // Send success reponse with the brans 
+    res.status(200).json({message:'Brands featched successfully', brands});
 
 }
