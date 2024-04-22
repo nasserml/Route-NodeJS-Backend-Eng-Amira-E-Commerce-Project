@@ -43,3 +43,7 @@ export const stripePaySchema={
 export const refundOrderSchema={
     params:Joi.object({orderId:generalRules.dbId.required()})
 }
+
+export const cancelOrderWithInOneDaySchema={
+    params:Joi.object({orderId:generalRules.dbId.required()})
+}

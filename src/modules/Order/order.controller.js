@@ -401,3 +401,55 @@ export const refundOrderAPI=async (req,res,next)=>{
     // Return success response that the order is refunded
     res.status(200).json({message:'Order Refunded successfully',order:refund});
 }
+
+/**
+ * Cancel order with in one day duaration API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Send success response that the ordered is canceleed successfully
+ * 
+ * @throws {Error} If the order is not found
+ * @throws {Error} if the order cannot be canceled after one day
+ */
+export const cancelOrderWithInOneDayAPI=async(req,res,next)=>{
+
+    // Extract the orderid from the request parameters
+    const {orderId}=req.params;
+
+    // Extract user id from the request auth user
+    const {_id:userId}=req.authUser;
+
+    // Find the order to be canceled using user id and order id using find by one method from order collection in the database
+    const canceldOrder=await findDocumentByFindOne(Order,{_id:orderId,user:userId}); 
+
+    // If order is not found retuirn an erroo rthar ther order doesn' t exist
+    if(!canceldOrder.success) return next({message:'Order not found',cause:404});
+
+    // Create the current time
+    const currentTime=DateTime.now();
+
+    // Caclucltae the days differences between the  cancledrder created by and the cuurent date
+    const timeDifference=currentTime.diff(DateTime.fromJSDate(canceldOrder.isDocumentExists.createdAt),'days').toObject().days;
+
+    // If the days time differences is greater than one day than return an error that order cannot be canceled after one day
+    if(timeDifference>1) return next({message:'Order cannot be cancled after one day', cause:400});
+
+    // Update the order status to canceled
+    canceldOrder.isDocumentExists.orderStatus='Canceled';
+
+    // Update the order canceled by to userId
+    canceldOrder.isDocumentExists.canceledBy =userId;
+
+    // Update the order canceldta to the current date
+    canceldOrder.isDocumentExists.cancelledAt = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
+
+    // Save the canceled order in the order collection in the database
+    await canceldOrder.isDocumentExists.save();
+
+    // Send success response that the order canceled successfully \
+    res.status(canceldOrder.status).json({message:'Order canceled successfully', order:canceldOrder.isDocumentExists});
+
+}

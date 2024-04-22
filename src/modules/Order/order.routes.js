@@ -22,4 +22,5 @@ router.post('/webhook',expressAsyncHandler(orderController.stripeWebhookLocalAPI
 
 router.post('/refund-order/:orderId',validationMiddleware(validators.refundOrderSchema),auth(endPointsRoles.REFUND_ORDER),expressAsyncHandler(orderController.refundOrderAPI));
 
+router.put('/cancel-order-with-in-one-day/:orderId',validationMiddleware(validators.cancelOrderWithInOneDaySchema),auth(endPointsRoles.CANCEL_ORDER_WITH_ONE_DAY),expressAsyncHandler(orderController.cancelOrderWithInOneDayAPI))
 export default router;

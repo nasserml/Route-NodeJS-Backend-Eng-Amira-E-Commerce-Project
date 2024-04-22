@@ -5,5 +5,6 @@ export const endPointsRoles={
     CONVERT_FROM_CART_TO_ORDER:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN,systemRoles.USER],
     DELIVER_ORDER:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN,systemRoles.USER],
     STRIPE_PAY:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN,systemRoles.USER],
-    REFUND_ORDER:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN]
+    REFUND_ORDER:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN],
+    CANCEL_ORDER_WITH_ONE_DAY:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN,systemRoles.USER]
 }
