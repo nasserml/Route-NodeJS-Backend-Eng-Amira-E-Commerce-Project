@@ -1,7 +1,7 @@
 import orderModel from '../../../DB/models/order.model.js';
 import reviewModel from '../../../DB/models/review.model.js';
 import productModel from '../../../DB/models/product.model.js';
-import { createDocumnetByCreate, findDocumentByFind, findDocumentByFindById, findDocumentByFindOne } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, deleteDocumentByFindOneAndDelete, findDocumentByFind, findDocumentByFindById, findDocumentByFindOne } from '../../../DB/dbMethods.js';
 
 //============== Add Review API endpoint=======================
 /**
@@ -67,4 +67,34 @@ export const addReviewAPI=async (req,res,next)=>{
     // Send success response indicating the reviews was added successfully
     res.status(newReview.status).json({message:'Review added successfully', review:newReview.createDocument});
 
+}
+
+/**
+ * Delete review API endpoint
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns {import('express').Response.json} JSON response -Success response that the review deleted successfully
+ * 
+ * @throws {Error} If the faid to delete the review or the review is not exist
+ */
+export const deleteReviewAPI=async(req,res,next)=>{
+
+    // Extract the reviewId from the request params
+    const{reviewId}=req.params;
+
+    // Extract user id from the requets auth user
+    const{_id:userId}=req.authUser;
+
+    // Delete the review from the review collection ion the database isuing the find on and elete method
+    const deleteReview=await deleteDocumentByFindOneAndDelete(reviewModel,{_id:reviewId,userId});
+
+    // If the revikew not exitsts return an error
+    if(!deleteReview.success) return next({message:'Review does not exists', cause:404});
+
+    //Send success response that the review is delteted successfully
+    res.status(deleteReview.status).json({message:'Review deleted successfully', review:deleteReview.isDeletedDocumentExists});
+    
 }
