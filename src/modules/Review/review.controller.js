@@ -96,5 +96,30 @@ export const deleteReviewAPI=async(req,res,next)=>{
 
     //Send success response that the review is delteted successfully
     res.status(deleteReview.status).json({message:'Review deleted successfully', review:deleteReview.isDeletedDocumentExists});
-    
+
+}
+/**
+ * Get all reviews for specific product based on its id API endpiont 
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * @returns {import('express').Response.json} JSON response -Return success response with reviews for the product
+ * 
+ * @throws {Error} If the reviews not found
+ */
+export const getAllReviewsForProductAPI=async(req,res,next)=>{
+
+    // Extract the product id from the request parameters.
+    const{productId}=req.params;
+
+    //Find all reviews for documents this product in the reviews collection in the databace using finb method with the id of the product
+    const reviewsProduct=await findDocumentByFind(reviewModel,{productId});
+
+    // If there is no reviews found return an error
+    if(!reviewsProduct.success) return next({message:'Reviews not found',cause:404});
+
+    // Send success repons etheat the reviews fetched successfully for the product with the data
+    res.status(reviewsProduct.status).json({message:'Reviews fetched successfully',reviews:reviewsProduct.isDocumentExists});
 }

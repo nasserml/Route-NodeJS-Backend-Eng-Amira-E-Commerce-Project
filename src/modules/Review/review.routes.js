@@ -13,4 +13,6 @@ const router=Router();
 router.post('/add-review',validationMiddleware(validators.addReviewSchema),auth(endPointsRoles.ADD_REVIEW),expressAsyncHandler(reviewController.addReviewAPI));
 
 router.delete('/delete-review/:reviewId',validationMiddleware(validators.deleteReviewSchema),auth(endPointsRoles.DELETE_REVIEW),expressAsyncHandler(reviewController.deleteReviewAPI));
+
+router.get('/get-all-reviews-for-product/:productId',validationMiddleware(validators.getAllReviewsProductSchema),expressAsyncHandler(reviewController.getAllReviewsForProductAPI))
 export default router;

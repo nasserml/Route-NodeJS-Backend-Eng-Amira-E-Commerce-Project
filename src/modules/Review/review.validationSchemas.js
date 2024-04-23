@@ -9,3 +9,7 @@ export const addReviewSchema={
 export const deleteReviewSchema={
     params:Joi.object({reviewId:generalRules.dbId.required()})
 }
+
+export const getAllReviewsProductSchema={
+    params:Joi.object({productId:generalRules.dbId.required()})
+}
