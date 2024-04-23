@@ -18,4 +18,7 @@ router.put('/disable-coupon/:couponId',validationMiddleware(validators.disableCo
 
 router.put('/enable-coupon/:couponId',validationMiddleware(validators.enableCouponSchema),auth(endpointsRoles.ENABLE_COUPON),expressAsyncHandler(couponController.enableCouponAPI));
 
+router.get('/get-all-disabled-coupons',auth(endpointsRoles.GET_ALL_DISABLED_COUPONS),expressAsyncHandler(couponController.getAllDisabledCouponsAPI));
+
+router.get('/get-all-enabled-coupons',auth(endpointsRoles.GET_ALL_ENABLED_COUPONS),expressAsyncHandler(couponController.getAllEnabledCouponsAPI));
 export default router;

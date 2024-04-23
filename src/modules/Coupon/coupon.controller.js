@@ -197,3 +197,50 @@ export const enableCouponAPI=async(req,res,next)=>{
 
 
 }
+
+/**
+ * Get all disabled coupons API endpoint
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Send success response that the disabled coupons fetched successfully
+ * 
+ * @throws {Error} If no disabled coupons is found
+ */
+export const getAllDisabledCouponsAPI=async(req,res,next)=>{
+
+    // Find all disabled coupons documents in the coupon collection in the databse using isEnabled to false
+    const disabledCoupons=await findDocumentByFind(Coupon,{isEnabled:false});
+
+    // If no disabled coupons documetns is found return error
+    if(!disabledCoupons.success || !disabledCoupons.isDocumentExists.length) return next({message:'No disabled coupons found',cause:404});
+
+    // Send success response that the disabled documetns fetched successfully
+    res.status(disabledCoupons.status).json({message:'Disabled coupons fetched successfully', coupons:disabledCoupons.isDocumentExists})
+}
+
+/**
+ * Get all the enabled coupons documents from the coupon collection in the database API enpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Send success response with  the enabled coupons documets 
+ * 
+ * @throws {Error} If no enabled coupons documetns is found in the database 
+*/
+export const getAllEnabledCouponsAPI=async(req,res,next)=>{
+
+    // Find all enabled coupons documents in the coupon collection from the database using find method based on isEnabled property equals true
+    const enabledCoupons=await findDocumentByFind(Coupon,{isEnabled:true});
+
+    // If there is no enabled documents coupons found return an error
+    if(!enabledCoupons.success || !enabledCoupons.isDocumentExists.length) return next({message:'No enabled coupons found',cause:404});
+
+    // Send success response that the enabled coupons fetched successfully
+    res.status(enabledCoupons.status).json({message:'Enabled coupons fetched successfully', coupons:enabledCoupons.isDocumentExists});
+}
