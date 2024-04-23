@@ -1,6 +1,6 @@
 import Coupon from '../../../DB/models/coupon.model.js';
 import CouponUsers from '../../../DB/models/coupon-users.model.js';
-import { createDocumnetByCreate, findDocumentByFind, findDocumentByFindOne } from '../../../DB/dbMethods.js';
+import { createDocumnetByCreate, findDocumentByFind, findDocumentByFindById, findDocumentByFindOne } from '../../../DB/dbMethods.js';
 
 import User from '../../../DB/models/user.model.js';
 
@@ -243,4 +243,30 @@ export const getAllEnabledCouponsAPI=async(req,res,next)=>{
 
     // Send success response that the enabled coupons fetched successfully
     res.status(enabledCoupons.status).json({message:'Enabled coupons fetched successfully', coupons:enabledCoupons.isDocumentExists});
+}
+
+/**
+ * Find coupon document by id from coupon collection in the database API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Send success response that the coupon fetched successfully
+ * 
+ * @throws {Error} If the coupon document not found
+ */
+export const getCouponByIdAPI=async(req,res,next)=>{
+
+    // Extract the coupon id from the request parameters
+    const {couponId}=req.params;
+
+    // Finf=d the coupon document from coupon collection in the database using find by id method
+    const findCoupon=await findDocumentByFindById(Coupon,couponId);
+
+    // If thre coupon document not found return an error that the coipon not found
+    if(!findCoupon.success) return next({message:'Coupon not found',cause:404});
+
+    // Send success response that the coupon is fetched successfully with the coupon document
+    res.status(findCoupon.status).json({message:'Coupon fetched successfully', coupon:findCoupon.isDocumentExists});
 }

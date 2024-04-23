@@ -30,3 +30,7 @@ export const disableCouponSchema={
 export const enableCouponSchema={
     params:Joi.object({couponId:generalRules.dbId.required()})
 }
+
+export const getCouponByIdSchema={
+    params:Joi.object({couponId:generalRules.dbId.required()})
+}
