@@ -5,6 +5,7 @@ import { createDocumnetByCreate, findDocumentByFind, findDocumentByFindOne } fro
 import User from '../../../DB/models/user.model.js';
 
 import { couponValidation } from '../../utils/coupon-validation.js';
+import { DateTime } from 'luxon';
 
 // ===================== Add coupon API =======================
 /**
@@ -102,4 +103,97 @@ export const applyCouponAPI = async (req, res, next)=>{
 
     // 5- Return success response that the coupon is applied successfully
     res.status(200).json({message:'Coupon applied successfully'});
+}
+
+/**
+ * Disable coupon API endpoint
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Return success response that the coupon is disabled successfully
+ * 
+ * @throws {Error} If the coupon not found
+ * @throws {Error} If the coupon is already disabled
+ */
+export const disableCouponAPI=async(req,res,next)=>{
+
+    // Extract the coupon id from the request params
+    const {couponId}=req.params;
+
+    // Extract the disbledby id user from the reuest auth user
+    const {_id:disabledBy}=req.authUser;
+
+    // Find the coupon document using couppn id and disabled by from couppn collection from the database using find by one method
+    const disabledCoupon=await findDocumentByFindOne(Coupon,{_id:couponId,addedBy:disabledBy});
+
+    // Check if the coupon is exists if it not exist return an error
+    if(!disabledCoupon.success) return next({message:'Coupon not found',cause:404});
+    
+    // Check if the coupon is disabled if it is disabled return an error
+    if(!disabledCoupon.isDocumentExists.isEnabled) return next({message:'Coupon is already disabled',cause:400});
+
+    // Update the coupon document isenabled to false
+    disabledCoupon.isDocumentExists.isEnabled=false;
+
+    // Update the coupon disabledby to disabledby
+    disabledCoupon.isDocumentExists.disabledBy=disabledBy;
+
+    // Update the document disabled at to the dtae time now
+    disabledCoupon.isDocumentExists.disabledAt=DateTime.now();
+
+    // Save the updated coupon document in the database
+    await disabledCoupon.isDocumentExists.save();
+
+    // Return success response that the coupon is disabled successfully
+    res.status(disabledCoupon.status).json({message:'Coupon is disabled successfully',coupon:disabledCoupon.isDocumentExists});
+}
+
+/**
+ * Enable coupon API endpoint
+ * 
+ * 
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @param {import('express').NextFunction} next - Express next function
+ * 
+ * @returns {import('express').Response.json} JSON response - Success response that the coupon is enabled successfully
+ * 
+ * @throws {Error} If the coupon not found in the database
+ * @throws {Error} If the coupon is already enabled  
+ */
+export const enableCouponAPI=async(req,res,next)=>{
+
+    // Extract the coupon id from the request params
+    const{couponId}=req.params;
+
+    // Extract enabled by user id from the request auth user
+    const{_id:enabledBy}=req.authUser;
+
+    // Find the coupon document in the coupon collection in the database based on coupon id and enabled by id using find one method
+    const enabledCoupon=await findDocumentByFindOne(Coupon,{_id:couponId,addedBy:enabledBy});
+
+    // Chech if the coupon exists it it is not retyurn an error
+    if(!enabledCoupon.success) return next({message:'Coupon not found',cause:404});
+
+    // Check if the coupon is already enabled if itis return an error
+    if(enabledCoupon.isDocumentExists.isEnabled) return next({message:'Coupon is already enabled',cause:400});
+
+    // Update the coupon document is enabled property to true indicating that the coupon is enavbled
+    enabledCoupon.isDocumentExists.isEnabled=true;
+
+    // Update the coupon document enabled by property to the user enabled by
+    enabledCoupon.isDocumentExists.enabledBy=enabledBy;
+
+    // Update the coupon document enable at property to the date time now 
+    enabledCoupon.isDocumentExists.enabledAt=DateTime.now();
+
+    // Save the updated coupon document in the database
+    await enabledCoupon.isDocumentExists.save();
+
+    // Send success response that thecoupo  is enabled successfuklly
+    res.status(enabledCoupon.status).json({message:'Coupon enabled successfully',coupon:enabledCoupon.isDocumentExists});
+
+
 }

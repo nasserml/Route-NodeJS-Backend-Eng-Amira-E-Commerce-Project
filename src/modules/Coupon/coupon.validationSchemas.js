@@ -22,3 +22,11 @@ export const applyCouponSchema = {
         couponCode: Joi.string().required().min(3).max(30).alphanum()
     })
 }
+
+export const disableCouponSchema={
+    params:Joi.object({couponId:generalRules.dbId.required()})
+}
+
+export const enableCouponSchema={
+    params:Joi.object({couponId:generalRules.dbId.required()})
+}

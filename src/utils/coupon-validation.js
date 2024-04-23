@@ -27,6 +27,9 @@ export const couponValidation = async ( couponCode, userId) => {
     // 3- Check if the coupon is expired if it is return error coupon is expired
     if ( coupon.isDocumentExists.couponStatus === 'expired' || DateTime.fromISO(coupon.isDocumentExists.toDate) < DateTime.now()) return { message: 'Coupon is expired', status: 400};
 
+    // 3.1- Chech if the coupon is disabled if it is then return an error
+    if(!coupon.isDocumentExists.isEnabled) return {meesage:'Coupon is disabled', status:400};
+
     // 4- Check if the coupon is active or not if it is not return error coupon is not started yet
     if(DateTime.fromISO(coupon.isDocumentExists.fromDate)>DateTime.now()) return { message:'Coupon is not started yet', status: 400};
 
