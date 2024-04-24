@@ -24,4 +24,6 @@ router.get('/get-all-enabled-coupons',auth(endpointsRoles.GET_ALL_ENABLED_COUPON
 
 router.get('/get-coupon-by-id/:couponId',validationMiddleware(validators.getCouponByIdSchema),auth(endpointsRoles.GET_COUPON_BY_ID),expressAsyncHandler(couponController.getCouponByIdAPI));
 
+router.put('/update-coupon/:couponId',validationMiddleware(validators.updateCouponSchema),auth(endpointsRoles.UPDATE_COUPON),expressAsyncHandler(couponController.updateCouponAPI));
+
 export default router;

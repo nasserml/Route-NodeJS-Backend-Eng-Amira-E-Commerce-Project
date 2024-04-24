@@ -34,3 +34,16 @@ export const enableCouponSchema={
 export const getCouponByIdSchema={
     params:Joi.object({couponId:generalRules.dbId.required()})
 }
+
+export const updateCouponSchema={
+    params:Joi.object({couponId:generalRules.dbId.required()}),
+    body: Joi.object({
+        newCouponCode: Joi.string().min(3).max(30).alphanum(),
+        newCouponAmount: Joi.number().min(1),
+        newFromDate: Joi.date().greater( Date.now()-(24*60*60*1000) ),
+        newToDate: Joi.date().greater( Joi.ref('newFromDate') ),
+        NewUsers: Joi.array().items( Joi.object( {
+            userId: generalRules.dbId.required(),
+            maxUsage: Joi.number().required().min(1) } ))
+    }).with('newFromDate','newToDate').or('newCouponCode','newCouponAmount','Users')
+}

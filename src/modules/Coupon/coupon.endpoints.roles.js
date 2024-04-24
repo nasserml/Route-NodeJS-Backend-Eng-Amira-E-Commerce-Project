@@ -7,5 +7,6 @@ export const endpointsRoles = {
     ENABLE_COUPON:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN,systemRoles.USER],
     GET_ALL_DISABLED_COUPONS:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN],
     GET_ALL_ENABLED_COUPONS:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN],
-    GET_COUPON_BY_ID:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN]
+    GET_COUPON_BY_ID:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN],
+    UPDATE_COUPON:[systemRoles.ADMIN,systemRoles.SUPER_ADMIN]
 }
